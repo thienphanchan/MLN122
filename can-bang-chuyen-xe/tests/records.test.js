@@ -103,4 +103,16 @@ describe('isValidRecord', () => {
     ];
     for (const r of bad) expect(isValidRecord(r), JSON.stringify(r)).toBe(false);
   });
+
+  test('rejects a record whose scores do not match its decisions', () => {
+    const good = buildRecord(finishedHistory(ONE_WIN), AT);
+    const perfect = { D: 100, P: 100, K: 100, X: 100 };
+    const edited = {
+      ...good,
+      days: good.days.map((d) => ({ ...d, scores: perfect, allGreen: true })),
+      wins: 5,
+      total: 2000,
+    };
+    expect(isValidRecord(edited)).toBe(false);
+  });
 });

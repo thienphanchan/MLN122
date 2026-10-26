@@ -1,6 +1,6 @@
 // Bản ghi các ván đã chơi xong và kết quả tốt nhất.
 import { ROUNDS } from './events.js';
-import { isAllGreen } from './simulate.js';
+import { isAllGreen, simulate } from './simulate.js';
 import { MAX_COMMISSION, MIN_COMMISSION } from './state.js';
 
 export const MAX_GAMES = 50;
@@ -38,12 +38,15 @@ export function addRecord(data, record) {
 
 const isScore = (v) => Number.isInteger(v) && v >= 0 && v <= 100;
 
-function isValidDay(d) {
-  return d !== null && typeof d === 'object'
+// Một ngày hợp lệ khi điểm đúng bằng điểm simulate() tính từ chính các quyết định của ngày đó.
+function isValidDay(d, i) {
+  const shapeOk = d !== null && typeof d === 'object'
     && Number.isInteger(d.commission) && d.commission >= MIN_COMMISSION && d.commission <= MAX_COMMISSION
     && typeof d.floor === 'boolean' && typeof d.dialogue === 'boolean'
-    && d.scores !== null && typeof d.scores === 'object' && PARTY_KEYS.every((key) => isScore(d.scores[key]))
-    && d.allGreen === isAllGreen(d.scores);
+    && d.scores !== null && typeof d.scores === 'object' && PARTY_KEYS.every((key) => isScore(d.scores[key]));
+  if (!shapeOk) return false;
+  const expected = simulate(i + 1, d.commission, d.floor, d.dialogue);
+  return PARTY_KEYS.every((key) => d.scores[key] === expected[key]) && d.allGreen === isAllGreen(d.scores);
 }
 
 export function isValidRecord(r) {

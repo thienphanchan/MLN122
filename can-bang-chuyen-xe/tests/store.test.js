@@ -104,3 +104,34 @@ describe('createStore', () => {
     expect(data.games).toHaveLength(1);
   });
 });
+
+describe('several tabs on one browser', () => {
+  test('reload picks up a game finished in another tab, so the next action keeps it', () => {
+    const backend = memoryBackend();
+    const tabA = createStore({ backend });
+    playWholeGame(createStore({ backend, now: () => AT }));
+    tabA.actions.reload();
+    expect(tabA.getSnapshot().data.games).toHaveLength(1);
+    tabA.actions.restart();
+    expect(JSON.parse(backend.map.get(STORAGE_KEY)).games).toHaveLength(1);
+  });
+
+  test('reload follows a clear made in another tab', () => {
+    const backend = memoryBackend();
+    const tabA = createStore({ backend, now: () => AT });
+    playWholeGame(tabA);
+    createStore({ backend }).actions.clearData();
+    tabA.actions.reload();
+    expect(tabA.getSnapshot().data).toEqual(defaultData());
+    expect(tabA.getSnapshot().game).toEqual(createInitialState());
+    expect(backend.map.has(STORAGE_KEY)).toBe(false);
+  });
+
+  test('reload tells subscribers', () => {
+    const store = createStore({ backend: memoryBackend() });
+    let calls = 0;
+    store.subscribe(() => { calls++; });
+    store.actions.reload();
+    expect(calls).toBe(1);
+  });
+});

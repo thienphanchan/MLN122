@@ -61,6 +61,22 @@ describe('broken data falls back to the default', () => {
     });
   }
 
+  test('a broken in-progress game is dropped without losing history or the best result', () => {
+    const record = finishedRecord();
+    for (const current of ['x', [], 3, undefined]) {
+      const stored = { version: 1, games: [record], best: record };
+      if (current !== undefined) stored.current = current;
+      const data = loadData(memoryBackend({ [STORAGE_KEY]: JSON.stringify(stored) }));
+      expect(data, JSON.stringify(current)).toEqual({ version: 1, current: null, games: [record], best: record });
+    }
+  });
+
+  test('a broken games list is emptied without losing the best result', () => {
+    const record = finishedRecord();
+    const raw = JSON.stringify({ version: 1, current: null, games: 'lots', best: record });
+    expect(loadData(memoryBackend({ [STORAGE_KEY]: raw }))).toEqual({ version: 1, current: null, games: [], best: record });
+  });
+
   test('keeps the valid games and drops the broken ones', () => {
     const record = finishedRecord();
     const raw = JSON.stringify({ ...defaultData(), games: [record, { wins: 9 }, null], best: { nope: true } });

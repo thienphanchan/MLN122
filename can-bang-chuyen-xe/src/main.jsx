@@ -9,10 +9,15 @@ import './styles.css';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from './App.jsx';
-import { getBackend } from './storage.js';
+import { STORAGE_KEY, getBackend } from './storage.js';
 import { createStore } from './store.js';
 
 const store = createStore({ backend: getBackend() });
+
+// Game mở ở nhiều tab: tab khác ghi hoặc xóa dữ liệu thì tab này đọc lại.
+window.addEventListener('storage', (e) => {
+  if (e.key === STORAGE_KEY || e.key === null) store.actions.reload();
+});
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

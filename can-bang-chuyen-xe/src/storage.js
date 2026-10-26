@@ -19,6 +19,7 @@ export function getBackend() {
 
 const isPlainObject = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
 
+// Phần nào hỏng thì chỉ bỏ phần đó: ván dở hỏng không kéo theo lịch sử và kết quả tốt nhất.
 // `current` chỉ được kiểm tra hình dạng ở đây; restoreState() kiểm tra nội dung.
 export function loadData(backend) {
   try {
@@ -27,12 +28,10 @@ export function loadData(backend) {
     if (raw === null) return defaultData();
     const parsed = JSON.parse(raw);
     if (!isPlainObject(parsed) || parsed.version !== VERSION) return defaultData();
-    if (!Array.isArray(parsed.games)) return defaultData();
-    if (parsed.current !== null && !isPlainObject(parsed.current)) return defaultData();
     return {
       version: VERSION,
-      current: parsed.current,
-      games: parsed.games.filter(isValidRecord),
+      current: isPlainObject(parsed.current) ? parsed.current : null,
+      games: Array.isArray(parsed.games) ? parsed.games.filter(isValidRecord) : [],
       best: isValidRecord(parsed.best) ? parsed.best : null,
     };
   } catch {

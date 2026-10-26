@@ -42,6 +42,13 @@ export function createStore({ backend, now = () => new Date() }) {
     confirm: () => apply(game.confirm),
     next: () => apply(game.next),
     restart: () => apply(game.restart),
+    // Đọc lại localStorage khi một tab khác vừa ghi, để tab này không ghi đè mất dữ liệu đó.
+    reload: () => {
+      data = loadData(backend);
+      current = game.restoreState(data.current) ?? game.createInitialState();
+      emit();
+      return true;
+    },
     clearData: () => {
       clearData(backend);
       data = defaultData();
