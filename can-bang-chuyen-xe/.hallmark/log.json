@@ -1,0 +1,28 @@
+[
+ {
+  "scope": "app",
+  "shape": "app screen",
+  "theme": "brand",
+  "axes": "dark/grotesk-heavy/neutral",
+  "hero": "title screen, headline + lead + one action beside the four-party legend",
+  "nav": "top bar: wordmark, course line, simulation notice, history link",
+  "footer": "none (app)",
+  "imagery": "none; inline SVG icons only",
+  "photos": [],
+  "entry": "Cân bằng chuyến xe: classroom economics game, 5 days, 4 parties",
+  "fingerprint": "navy ground, inverted light primary, four party hues on bars only, bulletin event card",
+  "sections": [
+   "intro",
+   "play: event bulletin, decisions, four bars with 50 line, verdict, class question",
+   "end: day marks, insights, three lessons",
+   "history: best, games as tables, clear data"
+  ],
+  "signature": "the four interest bars with the 50 threshold line",
+  "waived": [
+   "39b"
+  ],
+  "prompt": "Rebuild the Cân bằng chuyến xe artifact as a Vite project with localStorage, keeping palette, font, content and scoring",
+  "date": "2026-10-26",
+  "mode": "build"
+ }
+]

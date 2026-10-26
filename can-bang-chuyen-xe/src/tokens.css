@@ -1,0 +1,32 @@
+:root {
+  --space-3xs: 2px; --space-2xs: 4px; --space-xs: 8px; --space-sm: 12px; --space-md: 16px; --space-lg: 24px; --space-xl: 40px; --space-2xl: 64px; --space-3xl: 96px; --space-4xl: 144px;
+  --text-xs: 0.75rem; --text-sm: 0.875rem; --text-md: 1rem; --text-lg: 1.2rem; --text-xl: 1.44rem; --text-2xl: 1.728rem; --text-3xl: 2.074rem; --text-4xl: 2.488rem;
+  --text-display-s: 1.44rem; --text-display: 1.728rem; --text-section: 1.2rem; --text-title: 1rem; --text-lead: 1rem;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1); --ease-in: cubic-bezier(0.7, 0, 0.84, 0); --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-micro: 120ms; --dur-short: 220ms; --dur-long: 420ms; --dur-bar: 640ms;
+  --color-error: oklch(52% 0.19 27); --color-success: oklch(50% 0.12 150);
+  --container: 1244px; --gutter: 32px; --gap-columns: 24px; --section-gap-s: 120px; --section-gap: 144px; --section-gap-l: 176px;
+  --z-base: 1; --z-raised: 10; --z-dropdown: 100; --z-sticky: 200; --z-sticky-nav: 300; --z-modal: 400; --z-toast: 500; --z-tooltip: 600;
+
+  /* Nền và chữ: giữ nguyên bảng màu bản gốc. Bề mặt tách nhau bằng bậc độ sáng. */
+  --color-paper: #121331; --color-paper-2: #1D1E4A; --color-paper-3: #2A2B5E; --color-paper-sunk: #16173A;
+  --color-ink: #F4F3FF; --color-ink-2: #CFCDF2; --color-muted: #A9A8D6;
+  --color-rule: #2E2F66; --color-rule-strong: #4A4B8C;
+  /* Hành động chính đảo màu (nền sáng, chữ tối) để không mượn màu của bên nào. */
+  --color-accent: #FBFAFF; --color-accent-hover: #E4E1FF; --color-accent-ink: #1A1033; --color-focus: #FFD97A;
+  /* Thẻ biến cố: một mảng giấy sáng như bản tin, không phải màu nhấn. */
+  --color-bulletin: #ECEAFB;
+
+  /* Bốn bên: mỗi màu chỉ dùng cho dữ liệu và chú giải của đúng bên đó. */
+  --color-driver: #2EC4B6; --color-driver-tint: #17383F;
+  --color-platform: #FF7A5C; --color-platform-tint: #3D2230;
+  --color-customer: #FFC145; --color-customer-tint: #3B3320;
+  --color-society: #A99BFF; --color-society-tint: #2A2552;
+
+  /* Trạng thái */
+  --color-ok: #3DDC97; --color-danger: #FF5470; --color-danger-soft: #FF8FA3; --color-danger-tint: #3A1830; --color-warning: #FFD97A; --color-on-status: #1A1033;
+
+  --font-display: "Be Vietnam Pro", ui-sans-serif, system-ui, sans-serif; --font-body: "Be Vietnam Pro", ui-sans-serif, system-ui, sans-serif; --font-outlier: var(--font-body);
+  --radius-mark: 14px; --radius-card: 24px; --radius-panel: 28px; --radius-control: 16px; --radius-chip: 10px; --radius-pill: 999px; --rule-hair: 1px; --shadow-card: none;
+  --tracking-display: -0.02em;
+}

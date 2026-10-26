@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Cân bằng chuyến xe</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;background:#121331}
+a{color:#FFC145}a:hover{color:#FFD97A}
+input[type=range]{accent-color:#FF7A5C}
+</style>
+</helmet>
+<div style="min-height: 100vh; box-sizing: border-box; background: #121331; color: #F4F3FF; font-family: 'Be Vietnam Pro', system-ui, sans-serif; padding: 32px 20px 48px">
+<div style="max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px">
+
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px">
+<div style="display: flex; align-items: center; gap: 14px">
+<div style="width: 48px; height: 48px; border-radius: 14px; background: #FF7A5C; display: flex; align-items: center; justify-content: center">
+<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1A1033" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 17h14M6 17l1.5-6h9L18 17"></path><circle cx="8" cy="18" r="1.6"></circle><circle cx="16" cy="18" r="1.6"></circle><path d="M9 8l3-3 3 3"></path></svg>
+</div>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<div style="font-size: 22px; font-weight: 800; letter-spacing: -0.01em">Cân bằng chuyến xe</div>
+<div style="font-size: 14px; color: #A9A8D6">MLN122 · Lợi ích kinh tế và quan hệ lợi ích kinh tế</div>
+</div>
+</div>
+<div style="font-size: 13px; color: #A9A8D6; background: #1D1E4A; border: 1px solid #2E2F66; border-radius: 999px; padding: 8px 14px">Mô phỏng giả định · số liệu trong game không phải số liệu thực tế</div>
+</div>
+
+<sc-if value="{{isIntro}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-wrap: wrap; gap: 28px; align-items: stretch">
+<div style="flex: 999 1 560px; min-width: 0; background: #1D1E4A; border: 1px solid #2E2F66; border-radius: 28px; padding: 44px; display: flex; flex-direction: column; gap: 22px">
+<div style="display: inline-flex; align-self: flex-start; font-size: 13px; font-weight: 700; color: #1A1033; background: #FFC145; border-radius: 999px; padding: 6px 14px">5 ngày · 4 bên · 1 chuyến xe</div>
+<h1 style="margin: 0; font-size: 52px; line-height: 1.08; font-weight: 800; letter-spacing: -0.02em">Bạn là người điều phối. Giữ cả bốn bên cùng “xanh” trong 5 ngày.</h1>
+<p style="margin: 0; font-size: 18px; line-height: 1.6; color: #CFCDF2">Mỗi ngày bạn chọn mức chiết khấu của nền tảng và quyết định có bật chính sách của Nhà nước hay không. Mỗi ngày có một biến cố. Cuối ngày, bốn thanh đo cho biết lợi ích của từng bên.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 12px">
+<button onClick="{{start}}" style="font: inherit; font-size: 18px; font-weight: 800; color: #1A1033; background: #FF7A5C; border: none; border-radius: 16px; padding: 16px 28px; min-height: 56px; cursor: pointer">Bắt đầu ngày 1</button>
+</div>
+<p style="margin: 0; font-size: 14px; color: #A9A8D6">Mốc thực tế để tham khảo: chiết khấu chuẩn của Grab là 20% (xe máy) và 25% (ô tô), theo Báo Pháp Luật Việt Nam, 10/9/2026.</p>
+</div>
+<div style="flex: 1 1 340px; min-width: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px">
+<div style="background: #17383F; border: 1px solid #2EC4B6; border-radius: 22px; padding: 22px; display: flex; flex-direction: column; gap: 10px">
+<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2EC4B6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"></path></svg>
+<div style="font-size: 18px; font-weight: 700">Tài xế</div>
+<div style="font-size: 14px; color: #CFCDF2">Thu nhập thực nhận</div>
+</div>
+<div style="background: #3D2230; border: 1px solid #FF7A5C; border-radius: 22px; padding: 22px; display: flex; flex-direction: column; gap: 10px">
+<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FF7A5C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="3"></rect><path d="M11 18h2"></path></svg>
+<div style="font-size: 18px; font-weight: 700">Nền tảng</div>
+<div style="font-size: 14px; color: #CFCDF2">Lợi nhuận</div>
+</div>
+<div style="background: #3B3320; border: 1px solid #FFC145; border-radius: 22px; padding: 22px; display: flex; flex-direction: column; gap: 10px">
+<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FFC145" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18l-2 12H5z"></path><path d="M9 10v4M15 10v4"></path></svg>
+<div style="font-size: 18px; font-weight: 700">Khách hàng</div>
+<div style="font-size: 14px; color: #CFCDF2">Giá và thời gian chờ</div>
+</div>
+<div style="background: #2A2552; border: 1px solid #A99BFF; border-radius: 22px; padding: 22px; display: flex; flex-direction: column; gap: 10px">
+<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#A99BFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18M5 21V10l7-5 7 5v11"></path><path d="M10 21v-6h4v6"></path></svg>
+<div style="font-size: 18px; font-weight: 700">Xã hội</div>
+<div style="font-size: 14px; color: #CFCDF2">Ổn định, an sinh</div>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{isPlay}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 22px">
+
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px">
+<div style="font-size: 30px; font-weight: 800; letter-spacing: -0.01em">{{roundLabel}}</div>
+<div style="display: flex; gap: 8px" aria-label="Tiến độ 5 ngày">
+<sc-for list="{{dots}}" as="d" hint-placeholder-count="5">
+<div style="width: 44px; height: 10px; border-radius: 5px; background: {{d.bg}}"></div>
+</sc-for>
+</div>
+</div>
+
+<div style="display: flex; flex-wrap: wrap; gap: 22px; align-items: flex-start">
+
+<div style="flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 18px">
+<div style="background: #FFC145; color: #1A1033; border-radius: 24px; padding: 24px 26px; display: flex; flex-direction: column; gap: 8px">
+<div style="font-size: 13px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase">Biến cố hôm nay</div>
+<div style="font-size: 26px; font-weight: 800">{{event.title}}</div>
+<div style="font-size: 16px; line-height: 1.5">{{event.desc}}</div>
+</div>
+
+<div style="background: #1D1E4A; border: 1px solid #2E2F66; border-radius: 24px; padding: 26px; display: flex; flex-direction: column; gap: 22px">
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px">
+<label for="ck" style="font-size: 17px; font-weight: 700">Mức chiết khấu của nền tảng</label>
+<div style="font-size: 34px; font-weight: 800; color: #FF7A5C">{{commissionLabel}}</div>
+</div>
+<input id="ck" type="range" min="15" max="40" step="1" value="{{commission}}" onChange="{{onCommission}}" disabled="{{locked}}" style="width: 100%; height: 32px">
+<div style="display: flex; justify-content: space-between; font-size: 13px; color: #A9A8D6"><span>15% · tài xế giữ nhiều</span><span>40% · nền tảng giữ nhiều</span></div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div style="font-size: 15px; font-weight: 700; color: #CFCDF2">Chính sách của Nhà nước và xã hội</div>
+<button onClick="{{toggleFloor}}" disabled="{{locked}}" aria-pressed="{{floorOn}}" style="font: inherit; text-align: left; color: #F4F3FF; background: {{floorBg}}; border: 2px solid {{floorBorder}}; border-radius: 16px; padding: 14px 16px; min-height: 56px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 12px">
+<span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; font-weight: 700">Sàn thu nhập + bảo hiểm tai nạn</span><span style="font-size: 13px; color: #CFCDF2">Bảo vệ tài xế, nền tảng tốn thêm chi phí</span></span>
+<span style="font-size: 14px; font-weight: 800; white-space: nowrap">{{floorText}}</span>
+</button>
+<button onClick="{{toggleDialogue}}" disabled="{{locked}}" aria-pressed="{{dialogueOn}}" style="font: inherit; text-align: left; color: #F4F3FF; background: {{dlgBg}}; border: 2px solid {{dlgBorder}}; border-radius: 16px; padding: 14px 16px; min-height: 56px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 12px">
+<span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; font-weight: 700">Đối thoại ba bên định kỳ</span><span style="font-size: 13px; color: #CFCDF2">Nền tảng – tài xế – cơ quan quản lý</span></span>
+<span style="font-size: 14px; font-weight: 800; white-space: nowrap">{{dlgText}}</span>
+</button>
+</div>
+
+<sc-if value="{{canConfirm}}" hint-placeholder-val="{{ true }}">
+<button onClick="{{confirm}}" style="font: inherit; font-size: 18px; font-weight: 800; color: #1A1033; background: #FF7A5C; border: none; border-radius: 16px; padding: 16px 24px; min-height: 56px; cursor: pointer">Chốt quyết định</button>
+</sc-if>
+<sc-if value="{{locked}}" hint-placeholder-val="{{ false }}">
+<button onClick="{{next}}" style="font: inherit; font-size: 18px; font-weight: 800; color: #1A1033; background: #2EC4B6; border: none; border-radius: 16px; padding: 16px 24px; min-height: 56px; cursor: pointer">{{nextLabel}}</button>
+</sc-if>
+</div>
+</div>
+
+<div style="flex: 999 1 520px; min-width: 0; background: #1D1E4A; border: 1px solid #2E2F66; border-radius: 24px; padding: 28px; display: flex; flex-direction: column; gap: 22px">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap">
+<div style="font-size: 20px; font-weight: 800">Bốn thanh lợi ích</div>
+<div style="font-size: 13px; color: #A9A8D6">Từ 50 trở lên là ổn</div>
+</div>
+
+<sc-if value="{{waiting}}" hint-placeholder-val="{{ false }}">
+<div style="border: 2px dashed #3A3B7A; border-radius: 18px; padding: 40px 24px; text-align: center; display: flex; flex-direction: column; gap: 8px">
+<div style="font-size: 20px; font-weight: 700">Chọn mức chiết khấu và chính sách</div>
+<div style="font-size: 15px; color: #A9A8D6">Rồi bấm “Chốt quyết định” để xem kết quả ngày hôm nay.</div>
+</div>
+</sc-if>
+
+<sc-if value="{{locked}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-direction: column; gap: 18px">
+<sc-for list="{{metrics}}" as="m" hint-placeholder-count="4">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 10px">
+<div style="display: flex; align-items: center; gap: 10px"><div style="width: 12px; height: 12px; border-radius: 6px; background: {{m.color}}"></div><div style="font-size: 17px; font-weight: 700">{{m.label}}</div></div>
+<div style="display: flex; align-items: center; gap: 10px"><div style="font-size: 22px; font-weight: 800">{{m.value}}</div><div style="font-size: 12px; font-weight: 800; color: #1A1033; background: {{m.pillBg}}; border-radius: 999px; padding: 4px 10px">{{m.status}}</div></div>
+</div>
+<div style="height: 16px; border-radius: 8px; background: #2A2B5E; overflow: hidden"><div style="height: 16px; border-radius: 8px; width: {{m.width}}; background: {{m.color}}"></div></div>
+</div>
+</sc-for>
+</div>
+<div style="background: {{verdictBg}}; color: #1A1033; border-radius: 18px; padding: 18px 20px; display: flex; flex-direction: column; gap: 6px">
+<div style="font-size: 18px; font-weight: 800">{{verdictTitle}}</div>
+<div style="font-size: 15px; line-height: 1.5">{{explain}}</div>
+</div>
+<div style="border: 1px solid #3A3B7A; border-radius: 18px; padding: 16px 20px; display: flex; gap: 12px; align-items: flex-start">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#A99BFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"></path></svg>
+<div style="display: flex; flex-direction: column; gap: 4px"><div style="font-size: 13px; font-weight: 800; color: #A99BFF; text-transform: uppercase; letter-spacing: 0.08em">Hỏi cả lớp</div><div style="font-size: 16px">{{event.question}}</div></div>
+</div>
+</sc-if>
+</div>
+
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{isEnd}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 22px">
+<div style="background: #1D1E4A; border: 1px solid #2E2F66; border-radius: 28px; padding: 36px; display: flex; flex-wrap: wrap; gap: 28px; align-items: center; justify-content: space-between">
+<div style="flex: 999 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 10px">
+<div style="font-size: 14px; font-weight: 800; color: #FFC145; letter-spacing: 0.08em; text-transform: uppercase">Kết thúc 5 ngày</div>
+<h2 style="margin: 0; font-size: 40px; line-height: 1.12; font-weight: 800">{{endTitle}}</h2>
+<p style="margin: 0; font-size: 17px; color: #CFCDF2">{{endSub}}</p>
+</div>
+<div style="flex: 1 1 240px; display: flex; gap: 8px; justify-content: flex-end" aria-label="Kết quả từng ngày">
+<sc-for list="{{history}}" as="h" hint-placeholder-count="5">
+<div style="width: 52px; display: flex; flex-direction: column; align-items: center; gap: 6px"><div style="width: 44px; height: 44px; border-radius: 12px; background: {{h.bg}}; color: #1A1033; font-weight: 800; display: flex; align-items: center; justify-content: center">{{h.mark}}</div><div style="font-size: 12px; color: #A9A8D6">Ngày {{h.n}}</div></div>
+</sc-for>
+</div>
+</div>
+
+<sc-if value="{{hasInsights}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div style="font-size: 16px; font-weight: 800; color: #CFCDF2">Điều bạn vừa trải nghiệm</div>
+<sc-for list="{{insights}}" as="i" hint-placeholder-count="2">
+<div style="background: #17383F; border: 1px solid #2EC4B6; border-radius: 16px; padding: 14px 18px; font-size: 16px; line-height: 1.5">{{i.text}}</div>
+</sc-for>
+</div>
+</sc-if>
+
+<div style="font-size: 16px; font-weight: 800; color: #CFCDF2">Ba kết luận cho bài học</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px">
+<div style="background: #3D2230; border: 1px solid #FF7A5C; border-radius: 22px; padding: 24px; display: flex; flex-direction: column; gap: 10px">
+<div style="font-size: 36px; font-weight: 800; color: #FF7A5C">01</div>
+<div style="font-size: 20px; font-weight: 800">Vừa thống nhất, vừa mâu thuẫn</div>
+<div style="font-size: 15px; line-height: 1.55; color: #CFCDF2">Chiết khấu cao làm tài xế rời đi, rồi chính nền tảng mất lợi nhuận. Lợi ích của bên này gắn với lợi ích của bên kia.</div>
+</div>
+<div style="background: #17383F; border: 1px solid #2EC4B6; border-radius: 22px; padding: 24px; display: flex; flex-direction: column; gap: 10px">
+<div style="font-size: 36px; font-weight: 800; color: #2EC4B6">02</div>
+<div style="font-size: 20px; font-weight: 800">Mâu thuẫn không đối kháng</div>
+<div style="font-size: 15px; line-height: 1.55; color: #CFCDF2">Bóp chết một bên thì không ai thắng. Lời giải là điều chỉnh tỷ lệ phân chia, không phải loại bỏ một bên.</div>
+</div>
+<div style="background: #2A2552; border: 1px solid #A99BFF; border-radius: 22px; padding: 24px; display: flex; flex-direction: column; gap: 10px">
+<div style="font-size: 36px; font-weight: 800; color: #A99BFF">03</div>
+<div style="font-size: 20px; font-weight: 800">Thị trường + Nhà nước + đối thoại</div>
+<div style="font-size: 15px; line-height: 1.55; color: #CFCDF2">Ngày thường thị trường tự chạy được, nhưng khi có biến cố thì cần chính sách và đối thoại để giữ cân bằng.</div>
+</div>
+</div>
+<p style="margin: 0; font-size: 13px; color: #A9A8D6">Căn cứ: Bộ GD&amp;ĐT (2021), Giáo trình Kinh tế chính trị Mác – Lênin, mục 5.3.1. Mô hình trong game là giả định để minh họa.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 12px">
+<button onClick="{{restart}}" style="font: inherit; font-size: 17px; font-weight: 800; color: #1A1033; background: #FFC145; border: none; border-radius: 16px; padding: 14px 24px; min-height: 52px; cursor: pointer">Chơi lại</button>
+</div>
+</div>
+</sc-if>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":960}}'>
+var EVENTS = [
+  { title: 'Một ngày bình thường', desc: 'Không có cú sốc nào. Thị trường tự vận hành.', question: 'Không có biến cố, thị trường tự vận hành có ổn không?' },
+  { title: 'Giá xăng tăng mạnh', desc: 'Chi phí của tài xế tăng, trong khi cước khách trả không đổi.', question: 'Khi xăng tăng, ai nên chia sẻ rủi ro với tài xế?' },
+  { title: 'Đối thủ giảm giá', desc: 'Một hãng khác tung khuyến mãi, khách có thể chuyển sang đó.', question: 'Giảm giá để cạnh tranh: rốt cuộc ai trả tiền cho mức giá rẻ?' },
+  { title: 'Tài xế kêu gọi tắt app', desc: 'Tài xế bức xúc vì thu nhập thấp, kêu gọi tắt ứng dụng hai ngày.', question: 'Tắt app là mâu thuẫn đối kháng hay không đối kháng?' },
+  { title: 'Khách phàn nàn chờ xe lâu', desc: 'Giờ cao điểm, khách đặt xe phải chờ rất lâu nếu thiếu tài xế.', question: 'Khách hàng có phải là một bên trong quan hệ lợi ích không?' }
+];
+function clamp(v) { return Math.max(0, Math.min(100, Math.round(v))); }
+function simulate(r, c, floor, dlg) {
+  var D = 40 + (30 - c) * 3 + (floor ? 12 : 0) + (dlg ? 6 : 0);
+  var strike = false;
+  if (r === 2) D -= 12;
+  if (r === 4 && !dlg) { D -= 8; if (D < 50) { D -= 20; strike = true; } }
+  D = clamp(D);
+  var S = D;
+  var P = 2.6 * c * S / 70 - (floor ? 5 : 0) - (dlg ? 1 : 0);
+  var K = 0.6 * S + 30 - (floor ? 4 : 0);
+  if (r === 3) P -= (K >= 65 ? 4 : 12);
+  if (r === 5 && S < 55) K -= 12;
+  var X = 0.5 * D + 0.2 * K + 10 + (floor ? 12 : 0) + (dlg ? 10 : 0);
+  if (r === 4) X += dlg ? 5 : -15;
+  if (strike) X -= 15;
+  return { D: D, P: clamp(P), K: clamp(K), X: clamp(X), strike: strike };
+}
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { screen: 'intro', round: 1, commission: 25, floor: false, dlg: false, result: null, history: [] };
+  }
+  explainFor(r, c, floor, dlg, res) {
+    var lines = [];
+    if (c >= 32) lines.push('Chiết khấu cao: tài xế bỏ app, ít xe nên lợi nhuận nền tảng cũng giảm. Lợi ích hai bên gắn với nhau.');
+    else if (c <= 17) lines.push('Chiết khấu quá thấp: nền tảng không đủ nguồn thu. Bóp một bên thì cả hệ thống yếu đi.');
+    if (r === 2 && !floor) lines.push('Xăng tăng mà không có sàn thu nhập: tài xế gánh trọn rủi ro.');
+    if (r === 4 && !dlg) lines.push(res.strike ? 'Không có đối thoại, tài xế tắt app hàng loạt: mâu thuẫn bùng lên, xã hội bất ổn.' : 'Không có đối thoại: căng thẳng lan rộng, ổn định xã hội giảm.');
+    if (r === 4 && dlg) lines.push('Đối thoại ba bên giúp mâu thuẫn được giải quyết trong khuôn khổ pháp luật.');
+    if (r === 5 && res.D < 55) lines.push('Thiếu tài xế thì khách chờ lâu: lợi ích khách hàng cũng phụ thuộc vào tài xế.');
+    if (lines.length === 0) lines.push(res.allGreen ? 'Mức chiết khấu và chính sách hợp lý: các bên cùng có lợi.' : 'Một bên đang bị thiệt. Thử điều chỉnh chiết khấu hoặc chính sách.');
+    return lines.slice(0, 2).join(' ');
+  }
+  renderVals() {
+    var s = this.state;
+    var self = this;
+    var ev = EVENTS[s.round - 1] || EVENTS[0];
+    var res = s.result;
+    var metrics = [];
+    if (res) {
+      var defs = [
+        { label: 'Tài xế', v: res.D, color: '#2EC4B6' },
+        { label: 'Nền tảng', v: res.P, color: '#FF7A5C' },
+        { label: 'Khách hàng', v: res.K, color: '#FFC145' },
+        { label: 'Xã hội', v: res.X, color: '#A99BFF' }
+      ];
+      metrics = defs.map(function (d) {
+        var ok = d.v >= 50;
+        return { label: d.label, value: d.v, color: d.color, width: Math.max(d.v, 2) + '%', status: ok ? 'Ổn' : 'Nguy hiểm', pillBg: ok ? '#3DDC97' : '#FF5470' };
+      });
+    }
+    var allGreen = res ? res.allGreen : false;
+    var dots = [1, 2, 3, 4, 5].map(function (n) {
+      var h = s.history[n - 1];
+      var bg = h ? (h.allGreen ? '#3DDC97' : '#FF5470') : (n === s.round ? '#F4F3FF' : '#2E2F66');
+      return { n: n, bg: bg };
+    });
+    var history = s.history.map(function (h, i) {
+      return { n: i + 1, bg: h.allGreen ? '#3DDC97' : '#FF5470', mark: h.allGreen ? '✓' : '✕' };
+    });
+    var wins = s.history.filter(function (h) { return h.allGreen; }).length;
+    var insights = [];
+    if (s.history.some(function (h) { return h.c >= 32; })) insights.push({ text: 'Bạn đã thử chiết khấu cao: tài xế rời app, và lợi nhuận nền tảng giảm theo. Đó là mặt thống nhất của lợi ích.' });
+    if (s.history.some(function (h) { return h.c <= 17; })) insights.push({ text: 'Bạn đã thử chiết khấu rất thấp: nền tảng không trụ được. Hy sinh hẳn một bên không phải lời giải.' });
+    var noPolicyLoss = s.history.some(function (h, i) { return i > 0 && !h.floor && !h.dlg && !h.allGreen; });
+    if (noPolicyLoss) insights.push({ text: 'Có ngày bạn để thị trường tự chạy giữa biến cố và một bên “đỏ”. Đó là lý do cần chính sách của Nhà nước.' });
+    if (s.history.some(function (h, i) { return i === 3 && h.dlg; })) insights.push({ text: 'Ngày tài xế kêu gọi tắt app, bạn chọn đối thoại: mâu thuẫn không đối kháng được giải quyết bằng đối thoại và pháp luật.' });
+    var endTitle = wins === 5 ? 'Tuyệt vời! Bạn hài hòa được lợi ích cả 5 ngày.' : (wins >= 3 ? 'Khá lắm: ' + wins + '/5 ngày cả bốn bên cùng ổn.' : 'Chỉ ' + wins + '/5 ngày cả bốn bên cùng ổn.');
+    var endSub = wins === 5 ? 'Bạn đã kết hợp thị trường, chính sách và đối thoại đúng lúc.' : 'Cân bằng lợi ích khó hơn tưởng: mỗi lựa chọn có bên được, bên mất.';
+    return {
+      isIntro: s.screen === 'intro',
+      isPlay: s.screen === 'play',
+      isEnd: s.screen === 'end',
+      roundLabel: 'Ngày ' + s.round + '/5',
+      dots: dots,
+      event: ev,
+      commission: s.commission,
+      commissionLabel: s.commission + '%',
+      locked: !!res,
+      canConfirm: !res,
+      waiting: !res,
+      floorOn: s.floor,
+      dialogueOn: s.dlg,
+      floorText: s.floor ? 'Đang bật' : 'Tắt',
+      dlgText: s.dlg ? 'Đang bật' : 'Tắt',
+      floorBg: s.floor ? '#22465A' : '#16173A',
+      floorBorder: s.floor ? '#2EC4B6' : '#2E2F66',
+      dlgBg: s.dlg ? '#332D63' : '#16173A',
+      dlgBorder: s.dlg ? '#A99BFF' : '#2E2F66',
+      metrics: metrics,
+      verdictBg: allGreen ? '#3DDC97' : '#FF8FA3',
+      verdictTitle: allGreen ? 'Cả bốn bên cùng ổn' : 'Có bên đang bị thiệt',
+      explain: res ? res.explain : '',
+      nextLabel: s.round < 5 ? 'Sang ngày ' + (s.round + 1) : 'Xem tổng kết',
+      history: history,
+      insights: insights,
+      hasInsights: insights.length > 0,
+      endTitle: endTitle,
+      endSub: endSub,
+      start: function () { self.setState({ screen: 'play', round: 1, result: null, history: [] }); },
+      onCommission: function (e) { if (!self.state.result) self.setState({ commission: Number(e.target.value) }); },
+      toggleFloor: function () { if (!self.state.result) self.setState({ floor: !self.state.floor }); },
+      toggleDialogue: function () { if (!self.state.result) self.setState({ dlg: !self.state.dlg }); },
+      confirm: function () {
+        var st = self.state;
+        var r = simulate(st.round, st.commission, st.floor, st.dlg);
+        r.allGreen = r.D >= 50 && r.P >= 50 && r.K >= 50 && r.X >= 50;
+        r.explain = self.explainFor(st.round, st.commission, st.floor, st.dlg, r);
+        var h = st.history.concat([{ c: st.commission, floor: st.floor, dlg: st.dlg, allGreen: r.allGreen }]);
+        self.setState({ result: r, history: h });
+      },
+      next: function () {
+        var st = self.state;
+        if (st.round >= 5) self.setState({ screen: 'end' });
+        else self.setState({ round: st.round + 1, result: null });
+      },
+      restart: function () { self.setState({ screen: 'intro', round: 1, commission: 25, floor: false, dlg: false, result: null, history: [] }); }
+    };
+  }
+}
+</script>
+</body>
+</html>
