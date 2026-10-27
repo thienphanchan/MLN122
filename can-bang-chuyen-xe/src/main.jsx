@@ -1,9 +1,6 @@
-import '@fontsource/be-vietnam-pro/vietnamese-400.css';
-import '@fontsource/be-vietnam-pro/vietnamese-700.css';
-import '@fontsource/be-vietnam-pro/vietnamese-800.css';
-import '@fontsource/be-vietnam-pro/latin-400.css';
-import '@fontsource/be-vietnam-pro/latin-700.css';
-import '@fontsource/be-vietnam-pro/latin-800.css';
+import '@fontsource/be-vietnam-pro/400.css';
+import '@fontsource/be-vietnam-pro/700.css';
+import '@fontsource/be-vietnam-pro/800.css';
 import './styles.css';
 
 import { StrictMode } from 'react';

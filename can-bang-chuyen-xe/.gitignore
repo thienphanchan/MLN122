@@ -26,3 +26,7 @@ dist-ssr
 # design tool output
 .taste-skill
 .hallmark/shots
+
+# Browser test output
+test-results
+playwright-report

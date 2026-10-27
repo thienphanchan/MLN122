@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { STORAGE_KEY, clearData, defaultData, loadData, saveData } from '../src/storage.js';
-import { buildRecord, addRecord } from '../src/game/records.js';
+import { MAX_GAMES, buildRecord, addRecord } from '../src/game/records.js';
 import { confirm, createInitialState, next, start, toSaved } from '../src/game/state.js';
 import { memoryBackend, throwingBackend } from './helpers.js';
 
@@ -83,6 +83,26 @@ describe('broken data falls back to the default', () => {
     const data = loadData(memoryBackend({ [STORAGE_KEY]: raw }));
     expect(data.games).toEqual([record]);
     expect(data.best).toBeNull();
+  });
+
+  test('keeps the first valid record per ID without losing other games or the best', () => {
+    const first = finishedRecord();
+    const other = { ...first, id: 'other-game' };
+    const duplicate = { ...first, finishedAt: '2026-10-25T08:30:00.000Z' };
+    const broken = { ...first, wins: 99 };
+    const raw = JSON.stringify({ ...defaultData(), games: [broken, first, other, duplicate], best: first });
+    const data = loadData(memoryBackend({ [STORAGE_KEY]: raw }));
+    expect(data.games).toEqual([first, other]);
+    expect(data.best).toEqual(first);
+  });
+
+  test('applies the history limit after rejecting invalid and duplicate records', () => {
+    const first = finishedRecord();
+    const records = Array.from({ length: MAX_GAMES + 2 }, (_, i) => ({ ...first, id: `game-${i}` }));
+    const raw = JSON.stringify({ ...defaultData(), games: [null, records[0], ...records], best: first });
+    const data = loadData(memoryBackend({ [STORAGE_KEY]: raw }));
+    expect(data.games).toEqual(records.slice(0, MAX_GAMES));
+    expect(data.best).toEqual(first);
   });
 });
 

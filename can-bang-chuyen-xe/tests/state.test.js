@@ -157,10 +157,10 @@ describe('summarize', () => {
   test('insights follow the original conditions and order', () => {
     const history = playDays([[16, false, false], [33, false, false], [22, true, true], [22, false, true], [22, true, true]]).history;
     expect(summarize(history).insights).toEqual([
-      'Bạn đã thử chiết khấu cao: tài xế rời app, và lợi nhuận nền tảng giảm theo. Đó là mặt thống nhất của lợi ích.',
-      'Bạn đã thử chiết khấu rất thấp: nền tảng không trụ được. Hy sinh hẳn một bên không phải lời giải.',
-      'Có ngày bạn để thị trường tự chạy giữa biến cố và một bên “đỏ”. Đó là lý do cần chính sách của Nhà nước.',
-      'Ngày tài xế kêu gọi tắt app, bạn chọn đối thoại: mâu thuẫn không đối kháng được giải quyết bằng đối thoại và pháp luật.',
+      'Bạn đã thử chiết khấu cao: trong mô phỏng, giảm phần tài xế giữ lại có thể làm nguồn cung và lợi nhuận nền tảng suy giảm. Đây là sự phụ thuộc giữa lợi ích các bên.',
+      'Bạn đã thử chiết khấu rất thấp: cần kiểm tra nguồn thu nền tảng cùng với thu nhập tài xế. Không thể chỉ xét lợi ích của một bên.',
+      'Có ngày bạn chưa bật chính sách giữa biến cố và một bên bị thiệt. Game gợi mở việc kết hợp thị trường với chính sách và sự tham gia của các bên liên quan.',
+      'Ngày tài xế kêu gọi tắt app, bạn chọn đối thoại: các bên cùng thương lượng để xử lý xung đột về thu nhập và phân chia lợi ích.',
     ]);
   });
 
@@ -168,7 +168,7 @@ describe('summarize', () => {
     const history = playDays([[40, false, false], [22, true, true]]).history;
     expect(history[0].allGreen).toBe(false);
     expect(summarize(history).insights).toEqual([
-      'Bạn đã thử chiết khấu cao: tài xế rời app, và lợi nhuận nền tảng giảm theo. Đó là mặt thống nhất của lợi ích.',
+      'Bạn đã thử chiết khấu cao: trong mô phỏng, giảm phần tài xế giữ lại có thể làm nguồn cung và lợi nhuận nền tảng suy giảm. Đây là sự phụ thuộc giữa lợi ích các bên.',
     ]);
   });
 });

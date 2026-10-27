@@ -1,6 +1,6 @@
 // Lớp duy nhất chạm vào localStorage. Mọi thao tác bọc try/catch: khi trình duyệt chặn lưu trữ
 // hoặc dữ liệu hỏng, game vẫn chạy với dữ liệu mặc định, chỉ không lưu được.
-import { isValidRecord } from './game/records.js';
+import { MAX_GAMES, isValidRecord } from './game/records.js';
 
 export const STORAGE_KEY = 'cbcx:v1';
 const VERSION = 1;
@@ -19,6 +19,17 @@ export function getBackend() {
 
 const isPlainObject = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
 
+function loadGames(games) {
+  if (!Array.isArray(games)) return [];
+  const seen = new Set();
+  // Lịch sử lưu mới nhất trước: giữ bản hợp lệ đầu tiên của mỗi mã, rồi mới giới hạn số ván.
+  return games.filter((record) => {
+    if (!isValidRecord(record) || seen.has(record.id)) return false;
+    seen.add(record.id);
+    return true;
+  }).slice(0, MAX_GAMES);
+}
+
 // Phần nào hỏng thì chỉ bỏ phần đó: ván dở hỏng không kéo theo lịch sử và kết quả tốt nhất.
 // `current` chỉ được kiểm tra hình dạng ở đây; restoreState() kiểm tra nội dung.
 export function loadData(backend) {
@@ -31,7 +42,7 @@ export function loadData(backend) {
     return {
       version: VERSION,
       current: isPlainObject(parsed.current) ? parsed.current : null,
-      games: Array.isArray(parsed.games) ? parsed.games.filter(isValidRecord) : [],
+      games: loadGames(parsed.games),
       best: isValidRecord(parsed.best) ? parsed.best : null,
     };
   } catch {

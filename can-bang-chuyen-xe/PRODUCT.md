@@ -20,7 +20,7 @@ Game mô phỏng 5 ngày giúp lớp học trải nghiệm quan hệ lợi ích 
 
 ## Positioning
 
-Biến mục 5.3.1 giáo trình Kinh tế chính trị Mác – Lênin (Bộ GD&ĐT, 2021) thành một tình huống có biến cố và hệ quả đo được, thay vì đọc định nghĩa.
+Minh họa chủ đề quan hệ lợi ích trong chương 5 giáo trình Kinh tế chính trị Mác–Lênin bằng tình huống có biến cố và hệ quả đo được. Nguồn và vị trí tra cứu theo từng bản tài liệu ghi tại `docs/teaching-research.md`.
 
 ## Operating Context
 
@@ -30,6 +30,8 @@ Phòng học có máy chiếu, người xem ngồi xa màn hình; có thể khô
 
 - 5 ngày, mỗi ngày một biến cố cố định; thanh chiết khấu 15–40%; hai chính sách bật/tắt; bốn thanh lợi ích, từ 50 trở lên là Ổn.
 - Công thức tính điểm giữ nguyên bản gốc (artifact "Cân bằng chuyến xe", hàm simulate()).
+- Sau khi chốt: thông điệp cho đủ 16 tổ hợp trạng thái (cả bốn xanh và 15 tổ hợp đỏ), nguyên nhân gắn với biến cố và hướng giải quyết. Câu hỏi có đáp án gợi ý mặc định đóng, bấm mới hiện (người dùng yêu cầu ngày 2026-10-26).
+- Nội dung được tìm nguồn và đối chiếu Kinh tế chính trị Mác–Lênin theo yêu cầu ngày 2026-10-27; có mục cơ sở lý luận và nguồn. Các thông điệp là diễn giải vận dụng, không tự phân loại mâu thuẫn chỉ từ hành động tắt app.
 - Lưu ván dở, lịch sử ván đã xong và kết quả tốt nhất trong localStorage (key `cbcx:v1`). Không có máy chủ.
 
 ## Brand Commitments
@@ -39,7 +41,7 @@ Nền tối #121331; màu bốn bên: tài xế #2EC4B6, nền tảng #FF7A5C, k
 ## Evidence on Hand
 
 - Mốc chiết khấu chuẩn của Grab: 20% (xe máy) và 25% (ô tô), theo Báo Pháp Luật Việt Nam, 10/9/2026 (trích trong bản gốc).
-- Mọi số liệu trong game là giả định; trang luôn ghi "Mô phỏng giả định · số liệu trong game không phải số liệu thực tế". Không thêm số liệu, trích dẫn hay chứng thực nào khác.
+- Mọi số liệu trong game là giả định; trang luôn ghi "Mô phỏng giả định · số liệu trong game không phải số liệu thực tế". Nguồn lý luận được bổ sung theo yêu cầu nghiên cứu ngày 2026-10-27, ghi rõ phiên bản và nội dung đã kiểm tra; không thêm số liệu hay chứng thực thực tế chưa xác minh.
 
 ## Product Principles
 

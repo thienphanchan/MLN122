@@ -1,19 +1,21 @@
 import { summarize } from '../game/state.js';
+import { TEACHING_NOTES } from '../game/teaching.js';
 import { DayMarks } from './DayMarks.jsx';
 import { Icon } from './Icon.jsx';
+import { TeachingNote } from './TeachingNote.jsx';
 
 const LESSONS = [
   {
     title: 'Vừa thống nhất, vừa mâu thuẫn',
-    text: 'Chiết khấu cao làm tài xế rời đi, rồi chính nền tảng mất lợi nhuận. Lợi ích của bên này gắn với lợi ích của bên kia.',
+    text: 'Trong mô phỏng, cách phân chia có thể tác động thu nhập, động lực và kết quả của các bên khác. Quan hệ lợi ích vừa có mặt thống nhất, vừa có mặt mâu thuẫn.',
   },
   {
-    title: 'Mâu thuẫn không đối kháng',
-    text: 'Bóp chết một bên thì không ai thắng. Lời giải là điều chỉnh tỷ lệ phân chia, không phải loại bỏ một bên.',
+    title: 'Nhận diện đúng mâu thuẫn',
+    text: 'Cần xét lợi ích cơ bản trong quan hệ xã hội cụ thể. Việc cùng cần dịch vụ hoặc cùng tham gia đối thoại chưa đủ để kết luận mâu thuẫn không đối kháng.',
   },
   {
-    title: 'Thị trường + Nhà nước + đối thoại',
-    text: 'Ngày thường thị trường tự chạy được, nhưng khi có biến cố thì cần chính sách và đối thoại để giữ cân bằng.',
+    title: 'Thị trường, Nhà nước và xã hội',
+    text: 'Thị trường cần kết hợp chính sách và vai trò của các tổ chức xã hội. Nhà nước bảo vệ lợi ích hợp pháp và điều hòa quan hệ lợi ích, kể cả khi chưa có biến cố.',
   },
 ];
 
@@ -68,9 +70,10 @@ export function End({ game, data, actions }) {
           ))}
         </ol>
         <p className="source">
-          Căn cứ: Bộ GD&amp;ĐT (2021), Giáo trình Kinh tế chính trị Mác – Lênin, mục 5.3.1. Mô hình trong game là giả
-          định để minh họa.
+          Căn cứ: chủ đề quan hệ lợi ích và bảo đảm hài hòa lợi ích trong chương 5, Giáo trình Kinh tế chính trị
+          Mác–Lênin. Nguồn đã đối chiếu và phiên bản tài liệu được ghi bên dưới.
         </p>
+        <TeachingNote note={TEACHING_NOTES.overview} />
       </section>
 
       <div className="actions">

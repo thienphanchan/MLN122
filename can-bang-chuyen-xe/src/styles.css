@@ -189,12 +189,13 @@ a:hover { color: var(--color-accent-hover); }
   display: grid;
   gap: var(--space-lg);
   grid-template-columns: minmax(0, 1fr);
-  grid-template-areas: "event" "decide" "results" "ask" "action";
+  grid-template-areas: "event" "decide" "results" "feedback" "ask" "action";
   animation: rise-in var(--dur-long) var(--ease-out) both;
 }
 .event { grid-area: event; }
 .decide { grid-area: decide; color: var(--color-ink); }
 .results { grid-area: results; color: var(--color-ink); }
+.day-feedback { grid-area: feedback; }
 .ask { grid-area: ask; }
 .play-action { grid-area: action; }
 
@@ -334,14 +335,32 @@ a:hover { color: var(--color-accent-hover); }
   background: var(--color-ink);
   opacity: 0.7;
 }
-.verdict { display: flex; flex-direction: column; gap: var(--space-2xs); padding: var(--space-lg); color: var(--color-on-status); }
+.day-feedback { border-radius: var(--radius-card); background: var(--color-paper-2); overflow: hidden; }
+.verdict { display: flex; flex-direction: column; gap: var(--space-sm); padding: var(--space-lg); color: var(--color-on-status); }
 .verdict--ok { background: var(--color-ok); }
 .verdict--bad { background: var(--color-danger-soft); }
+.verdict-heading { display: flex; align-items: flex-start; gap: var(--space-sm); }
 .verdict-title { font-family: var(--font-body); font-size: var(--text-xl); font-weight: 800; letter-spacing: 0; max-width: none; line-height: 1.2; }
 .verdict-text { line-height: 1.5; max-width: 70ch; }
+.feedback-body { display: grid; gap: var(--space-lg); padding: var(--space-lg); }
+.feedback-reason, .feedback-solution { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-sm); min-width: 0; }
+.feedback-body h3 { font-size: var(--text-lg); font-weight: 800; letter-spacing: 0; }
+.feedback-body p { color: var(--color-ink-2); }
 .ask { display: flex; align-items: flex-start; gap: var(--space-md); padding: var(--space-xs) var(--space-xs) 0; color: var(--color-ink); }
 .ask-icon { color: var(--color-ink-2); }
+.ask-body { flex: 1; min-width: 0; }
 .ask-question { font-size: var(--text-xl); font-weight: 700; line-height: 1.35; max-width: 40ch; }
+.answer { margin-top: var(--space-md); }
+.answer summary, .teaching-note summary { width: fit-content; padding: var(--space-sm) var(--space-md); border-radius: var(--radius-control); background: var(--color-paper-2); color: var(--color-ink); font-weight: 700; list-style-position: inside; cursor: pointer; }
+.answer summary:hover, .answer[open] summary, .teaching-note summary:hover, .teaching-note[open] summary { background: var(--color-paper-3); }
+.answer-body { display: flex; flex-direction: column; gap: var(--space-sm); margin-top: var(--space-md); color: var(--color-ink-2); }
+.answer-body strong { color: var(--color-ink); }
+.teaching-note { grid-column: 1 / -1; min-width: 0; }
+.feedback-body .teaching-note summary { background: var(--color-paper-3); }
+.teaching-note-body { display: flex; flex-direction: column; gap: var(--space-md); margin-top: var(--space-md); color: var(--color-ink-2); }
+.learning-source-list { margin: 0; padding-inline-start: var(--space-lg); overflow-wrap: anywhere; }
+.learning-source-list li + li { margin-top: var(--space-sm); }
+.learning-source-locator { display: block; margin-top: var(--space-2xs); color: var(--color-ink-2); }
 
 @keyframes rise-in { from { opacity: 0; transform: translateY(12px); } }
 @keyframes bar-grow { from { transform: scaleX(0); } }
@@ -477,14 +496,14 @@ a:hover { color: var(--color-accent-hover); }
   /* Bốn bên thành bốn hàng cao bằng nhau, lấp đủ chiều cao khối bên trái. */
   .party-list { grid-template-columns: minmax(0, 1fr); grid-auto-rows: 1fr; }
   .party { align-content: center; }
-  /* Kết quả trải qua hàng thứ ba (1fr) nên hàng hai chỉ cao bằng khối quyết định:
-     câu hỏi nằm ngay dưới khối quyết định, nút sang ngày nằm ngay dưới kết quả. */
+  /* Thông điệp dùng cả chiều ngang để đọc phần giải thích và hướng giải quyết.
+     Câu hỏi ở bên trái, nút sang ngày vẫn nằm trong cột kết quả bên phải. */
   .play-grid {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    grid-template-rows: auto auto 1fr auto;
-    grid-template-areas: "event event" "decide results" "ask results" ". action";
+    grid-template-areas: "event event" "decide results" "feedback feedback" "ask action";
     align-items: start;
   }
   .results-body { padding: var(--space-lg) var(--space-xl) var(--space-xl); }
   .verdict { padding: var(--space-lg) var(--space-xl); }
+  .feedback-body { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-xl); padding: var(--space-lg) var(--space-xl); }
 }

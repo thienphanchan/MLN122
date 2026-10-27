@@ -1,9 +1,14 @@
 import { useEffect, useRef } from 'react';
 import { EVENTS, ROUNDS } from '../game/events.js';
+import { DISCUSSION_ANSWERS } from '../game/discussion.js';
+import { getDayFeedback } from '../game/feedback.js';
+import { TEACHING_NOTES } from '../game/teaching.js';
 import { OK_THRESHOLD } from '../game/simulate.js';
 import { MAX_COMMISSION, MIN_COMMISSION } from '../game/state.js';
 import { DayMarks } from './DayMarks.jsx';
+import { DayFeedback } from './DayFeedback.jsx';
 import { Icon } from './Icon.jsx';
+import { SourceLinks } from './TeachingNote.jsx';
 import { PARTIES, STATUS_DANGER, STATUS_OK } from './parties.js';
 import { prefersReducedMotion } from './useHash.js';
 
@@ -40,7 +45,7 @@ function Toggle({ id, title, sub, on, disabled, onClick }) {
         <span className="toggle-title">{title}</span>
         <span className="toggle-sub">{sub}</span>
       </span>
-      <span className="toggle-state">{on ? 'Đang bật' : 'Tắt'}</span>
+      <span className="toggle-state" aria-hidden="true">{on ? 'Đang bật' : 'Tắt'}</span>
     </button>
   );
 }
@@ -50,27 +55,25 @@ function Toggle({ id, title, sub, on, disabled, onClick }) {
 export function Play({ game, actions, announce }) {
   const { round, commission, floor, dialogue, result, history } = game;
   const event = EVENTS[round - 1];
+  const answer = DISCUSSION_ANSWERS[round - 1];
   const locked = result !== null;
-  const nextRef = useRef(null);
+  const feedback = locked ? getDayFeedback(game) : null;
+  const feedbackMessage = feedback?.message;
+  const resultsTitleRef = useRef(null);
   const resultsRef = useRef(null);
   const wasLocked = useRef(locked);
 
-  // Vừa chốt: đưa focus tới bước tiếp theo và đọc kết quả. Màn hẹp cuộn tới đầu khối kết quả;
-  // màn rộng thấp (máy chiếu 720p) cuộn vừa đủ để thấy nút sang ngày.
+  // Vừa chốt: đưa focus tới kết quả để đọc điểm, thông điệp và thảo luận trước khi sang ngày.
   useEffect(() => {
     if (locked && !wasLocked.current) {
-      nextRef.current?.focus({ preventScroll: true });
+      resultsTitleRef.current?.focus({ preventScroll: true });
       const behavior = prefersReducedMotion() ? 'auto' : 'smooth';
-      if (window.matchMedia('(max-width: 59.99rem)').matches) {
-        resultsRef.current?.scrollIntoView({ behavior, block: 'start' });
-      } else {
-        nextRef.current?.scrollIntoView({ behavior, block: 'nearest' });
-      }
+      resultsRef.current?.scrollIntoView({ behavior, block: 'start' });
       const scores = PARTIES.map((p) => `${p.label} ${result[p.key]}`).join(', ');
-      announce(`Ngày ${round}: ${result.allGreen ? 'Cả bốn bên cùng ổn' : 'Có bên đang bị thiệt'}. ${scores}.`);
+      announce(`Ngày ${round}: ${result.allGreen ? 'Cả bốn bên cùng ổn' : 'Có bên đang bị thiệt'}. ${scores}. ${feedbackMessage}`);
     }
     wasLocked.current = locked;
-  }, [locked, result, round, announce]);
+  }, [locked, result, round, announce, feedbackMessage]);
 
   return (
     <div className="play">
@@ -118,7 +121,7 @@ export function Play({ game, actions, announce }) {
           </div>
 
           <div className="field" role="group" aria-labelledby="policy-title">
-            <h3 id="policy-title" className="field-label">Chính sách của Nhà nước và xã hội</h3>
+            <h2 id="policy-title" className="field-label">Chính sách của Nhà nước và xã hội</h2>
             <Toggle
               id="toggle-floor"
               title="Sàn thu nhập + bảo hiểm tai nạn"
@@ -152,7 +155,7 @@ export function Play({ game, actions, announce }) {
         <section className="results" aria-labelledby="results-title" ref={resultsRef}>
           <div className="results-body">
             <div className="results-head">
-              <h2 id="results-title" className="results-title">Bốn thanh lợi ích</h2>
+              <h2 id="results-title" className="results-title" ref={resultsTitleRef} tabIndex={-1}>Bốn thanh lợi ích</h2>
               <p className="results-hint">Từ 50 trở lên là ổn</p>
             </div>
             {!locked && (
@@ -166,24 +169,30 @@ export function Play({ game, actions, announce }) {
               ))}
             </ul>
           </div>
-          {locked && (
-            <div className={`verdict verdict--${result.allGreen ? 'ok' : 'bad'}`}>
-              <h3 className="verdict-title">{result.allGreen ? 'Cả bốn bên cùng ổn' : 'Có bên đang bị thiệt'}</h3>
-              <p className="verdict-text">{result.explain}</p>
-            </div>
-          )}
         </section>
+
+        {locked && <DayFeedback round={round} feedback={feedback} />}
 
         {locked && (
           <section className="ask" aria-label="Câu hỏi cho lớp">
             <Icon name="question" size={30} className="ask-icon" />
-            <p className="ask-question">Hỏi cả lớp: {event.question}</p>
+            <div className="ask-body">
+              <p className="ask-question">Hỏi cả lớp: {event.question}</p>
+              <details className="answer">
+                <summary>Xem đáp án gợi ý</summary>
+                <div className="answer-body">
+                  <p>{answer.text}</p>
+                  <p><strong>Liên hệ bài học: </strong>{answer.lesson}</p>
+                  <SourceLinks sourceIds={TEACHING_NOTES[answer.concept].sourceIds} />
+                </div>
+              </details>
+            </div>
           </section>
         )}
 
         {locked && (
           <div className="play-action">
-            <button type="button" ref={nextRef} className="btn btn--primary btn--large btn--block" onClick={actions.next}>
+            <button type="button" className="btn btn--primary btn--large btn--block" onClick={actions.next}>
               {round < ROUNDS ? `Sang ngày ${round + 1}` : 'Xem tổng kết'}
             </button>
           </div>

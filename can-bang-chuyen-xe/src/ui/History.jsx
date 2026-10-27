@@ -76,7 +76,7 @@ function GameCard({ game, isBest }) {
   );
 }
 
-function ClearZone({ gameCount, onClear }) {
+function ClearZone({ onClear }) {
   const [confirming, setConfirming] = useState(false);
   const clearRef = useRef(null);
   const keepRef = useRef(null);
@@ -99,7 +99,7 @@ function ClearZone({ gameCount, onClear }) {
       {confirming ? (
         <div className="confirm" role="group" aria-labelledby="confirm-text">
           <p id="confirm-text" className="confirm-text">
-            Xóa {gameCount} ván đã lưu, kết quả tốt nhất và ván đang chơi dở trên trình duyệt này? Không thể hoàn tác.
+            Xóa toàn bộ lịch sử, kết quả tốt nhất và ván đang chơi dở trên trình duyệt này? Không thể hoàn tác.
           </p>
           <div className="actions">
             <button type="button" className="btn btn--danger" onClick={onClear}>Xóa hẳn</button>
@@ -169,7 +169,7 @@ export function History({ data, actions, announce }) {
         </section>
       )}
 
-      {hasSaved && <ClearZone gameCount={games.length} onClear={clear} />}
+      {hasSaved && <ClearZone onClear={clear} />}
     </div>
   );
 }
