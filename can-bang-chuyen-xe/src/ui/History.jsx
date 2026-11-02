@@ -137,7 +137,7 @@ export function History({ data, actions, announce }) {
         </div>
         <a className="btn btn--secondary" href="#">
           <Icon name="back" size={20} />
-          <span>Quay lại game</span>
+          <span>Quay lại tình huống</span>
         </a>
       </div>
 

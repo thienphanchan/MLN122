@@ -290,8 +290,9 @@ a:hover { color: var(--color-accent-hover); }
 .results-title { font-size: var(--text-xl); font-weight: 800; letter-spacing: -0.01em; max-width: none; }
 .results-hint { font-size: var(--text-sm); color: var(--color-muted); }
 .results-waiting { color: var(--color-ink-2); }
-.metrics { display: flex; flex-direction: column; gap: var(--space-lg); margin: 0; padding: 0; list-style: none; }
-.metric { display: flex; flex-direction: column; gap: var(--space-xs); }
+.metric-change { font-size: var(--text-sm); color: var(--color-muted); }
+.metrics { display: flex; flex-direction: column; gap: var(--space-md); margin: 0; padding: 0; list-style: none; }
+.metric { display: flex; flex-direction: column; gap: var(--space-2xs); }
 .metric-head { display: flex; justify-content: space-between; align-items: center; gap: var(--space-sm); }
 .metric-name, .metric-score { display: flex; align-items: center; gap: var(--space-sm); min-width: 0; }
 .metric-label { font-size: var(--text-lg); font-weight: 700; }
@@ -323,8 +324,7 @@ a:hover { color: var(--color-accent-hover); }
   inset: 0;
   transform-origin: left center;
   transform: scaleX(var(--v));
-  animation: bar-grow var(--dur-bar) var(--ease-out) both;
-  animation-delay: calc(var(--i) * 70ms);
+  transition: transform var(--dur-short) var(--ease-out);
 }
 /* Vạch ngưỡng 50: "từ 50 trở lên là ổn" nằm ngay trên thanh. */
 .bar-threshold {
@@ -363,7 +363,6 @@ a:hover { color: var(--color-accent-hover); }
 .learning-source-locator { display: block; margin-top: var(--space-2xs); color: var(--color-ink-2); }
 
 @keyframes rise-in { from { opacity: 0; transform: translateY(12px); } }
-@keyframes bar-grow { from { transform: scaleX(0); } }
 
 /* ---------- Màn tổng kết ---------- */
 .end { display: flex; flex-direction: column; gap: var(--space-xl); }
@@ -503,7 +502,7 @@ a:hover { color: var(--color-accent-hover); }
     grid-template-areas: "event event" "decide results" "feedback feedback" "ask action";
     align-items: start;
   }
-  .results-body { padding: var(--space-lg) var(--space-xl) var(--space-xl); }
+  .results-body { padding: var(--space-lg) var(--space-xl); gap: var(--space-md); }
   .verdict { padding: var(--space-lg) var(--space-xl); }
   .feedback-body { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-xl); padding: var(--space-lg) var(--space-xl); }
 }

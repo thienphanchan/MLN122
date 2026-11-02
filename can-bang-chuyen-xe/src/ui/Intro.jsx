@@ -11,7 +11,8 @@ export function Intro({ data, actions }) {
         </h1>
         <p className="intro-lead">
           Bạn là người điều phối. Mỗi ngày bạn chọn mức chiết khấu của nền tảng và quyết định có bật chính sách của Nhà
-          nước hay không. Mỗi ngày có một biến cố. Cuối ngày, bốn thanh đo cho biết lợi ích của từng bên.
+          nước hay không. Biến cố mỗi ngày làm thị trường thay đổi; một phương án không thể giữ cả bốn bên ổn suốt ván.
+          Theo dõi bốn thanh đo khi điều chỉnh, rồi chốt phương án cho từng ngày.
         </p>
         <div className="actions">
           <button type="button" className="btn btn--primary btn--large" onClick={actions.start}>

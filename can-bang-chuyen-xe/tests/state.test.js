@@ -35,7 +35,7 @@ function playDays(days) {
   return s;
 }
 
-const GOOD_GAME = [[20, false, false], [22, true, true], [22, true, true], [22, true, true], [22, true, true]];
+const GOOD_GAME = [[20, false, false], [22, true, true], [22, false, true], [22, true, true], [16, true, true]];
 
 describe('initial state and start', () => {
   test('starts on the intro screen with the original defaults', () => {
@@ -146,7 +146,7 @@ describe('summarize', () => {
   });
 
   test('three and one good days use the original wording', () => {
-    const three = playDays([[20, false, false], [22, true, true], [22, true, true], [35, false, false], [35, false, false]]).history;
+    const three = playDays([[20, false, false], [22, true, true], [22, false, true], [35, false, false], [35, false, false]]).history;
     expect(summarize(three).wins).toBe(3);
     expect(summarize(three).endTitle).toBe('Khá lắm: 3/5 ngày cả bốn bên cùng ổn.');
     expect(summarize(three).endSub).toBe('Cân bằng lợi ích khó hơn tưởng: mỗi lựa chọn có bên được, bên mất.');
@@ -159,7 +159,7 @@ describe('summarize', () => {
     expect(summarize(history).insights).toEqual([
       'Bạn đã thử chiết khấu cao: trong mô phỏng, giảm phần tài xế giữ lại có thể làm nguồn cung và lợi nhuận nền tảng suy giảm. Đây là sự phụ thuộc giữa lợi ích các bên.',
       'Bạn đã thử chiết khấu rất thấp: cần kiểm tra nguồn thu nền tảng cùng với thu nhập tài xế. Không thể chỉ xét lợi ích của một bên.',
-      'Có ngày bạn chưa bật chính sách giữa biến cố và một bên bị thiệt. Game gợi mở việc kết hợp thị trường với chính sách và sự tham gia của các bên liên quan.',
+      'Có ngày bạn chưa áp dụng chính sách hỗ trợ trước biến cố và một bên bị thiệt. Điều này cho thấy cần kết hợp cơ chế thị trường với chính sách và sự tham gia của các bên liên quan.',
       'Ngày tài xế kêu gọi tắt app, bạn chọn đối thoại: các bên cùng thương lượng để xử lý xung đột về thu nhập và phân chia lợi ích.',
     ]);
   });

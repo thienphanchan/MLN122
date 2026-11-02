@@ -57,7 +57,7 @@ describe('daily teaching feedback', () => {
     expect(getDayFeedback({ ...base, round: 2, floor: true }).context).toContain('Sàn thu nhập đang');
     expect(getDayFeedback({ ...base, round: 3 }).context).toContain('Đối thủ');
     expect(getDayFeedback({ ...base, round: 5 }).context).toContain('chờ xe');
-    expect(getDayFeedback({ ...base, round: 5, result: { ...base.result, D: 55 } }).context).toContain('không chịu thêm');
+    expect(getDayFeedback({ ...base, round: 5, result: { ...base.result, D: 55 } }).context).toContain('Nhu cầu giờ cao điểm tăng');
   });
 
   test('distinguishes dialogue, tension and the actual mass log-off on day 4', () => {

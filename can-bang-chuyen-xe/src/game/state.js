@@ -72,7 +72,7 @@ export function summarize(history) {
   const insights = [];
   if (history.some((h) => h.commission >= 32)) insights.push('Bạn đã thử chiết khấu cao: trong mô phỏng, giảm phần tài xế giữ lại có thể làm nguồn cung và lợi nhuận nền tảng suy giảm. Đây là sự phụ thuộc giữa lợi ích các bên.');
   if (history.some((h) => h.commission <= 17)) insights.push('Bạn đã thử chiết khấu rất thấp: cần kiểm tra nguồn thu nền tảng cùng với thu nhập tài xế. Không thể chỉ xét lợi ích của một bên.');
-  if (history.some((h, i) => i > 0 && !h.floor && !h.dialogue && !h.allGreen)) insights.push('Có ngày bạn chưa bật chính sách giữa biến cố và một bên bị thiệt. Game gợi mở việc kết hợp thị trường với chính sách và sự tham gia của các bên liên quan.');
+  if (history.some((h, i) => i > 0 && !h.floor && !h.dialogue && !h.allGreen)) insights.push('Có ngày bạn chưa áp dụng chính sách hỗ trợ trước biến cố và một bên bị thiệt. Điều này cho thấy cần kết hợp cơ chế thị trường với chính sách và sự tham gia của các bên liên quan.');
   if (history.some((h, i) => i === 3 && h.dialogue)) insights.push('Ngày tài xế kêu gọi tắt app, bạn chọn đối thoại: các bên cùng thương lượng để xử lý xung đột về thu nhập và phân chia lợi ích.');
   const endTitle = wins === 5
     ? 'Tuyệt vời! Bạn hài hòa được lợi ích cả 5 ngày.'

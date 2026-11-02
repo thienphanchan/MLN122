@@ -20,7 +20,7 @@ const CASES = {
   },
   P: {
     title: 'Nền tảng đang bị thiệt',
-    message: 'Điểm lợi nhuận nền tảng chưa đạt ngưỡng ổn của game, dù ba bên còn lại đang xanh. Cần xem xét lợi ích của bên tổ chức dịch vụ cùng với lợi ích của tài xế, khách hàng và xã hội.',
+    message: 'Lợi nhuận của nền tảng chưa được bảo đảm, dù lợi ích của ba bên còn lại tương đối ổn định. Cần xem xét lợi ích của bên tổ chức dịch vụ cùng với lợi ích của tài xế, khách hàng và xã hội.',
     reason: 'Lợi nhuận nền tảng dưới ngưỡng 50. Trong mô phỏng, nguồn thu phụ thuộc cả chiết khấu lẫn mức sẵn sàng của tài xế, đồng thời phải bù chi phí chính sách và sức ép cạnh tranh.',
     solution: 'Thử mức chiết khấu vừa bảo đảm nguồn thu vừa duy trì tài xế tham gia. Khi chiết khấu đã cao mà nguồn tài xế yếu, tăng tỷ lệ thu thêm nữa có thể tiếp tục làm điểm lợi nhuận giảm trong mô phỏng.',
   },
@@ -113,16 +113,16 @@ function eventContext({ round, floor, dialogue, result }) {
         ? 'Sàn thu nhập đang hỗ trợ tài xế nhưng nền tảng chịu thêm chi phí chính sách.'
         : 'Chưa bật sàn thu nhập nên chưa có phần hỗ trợ từ chính sách này.');
     case 3:
-      return 'Đối thủ khuyến mãi khiến nền tảng chịu thêm sức ép lợi nhuận. Trong mô phỏng, sức ép này lớn hơn khi trải nghiệm khách chưa đủ tốt để giữ khách.';
+      return 'Đối thủ khuyến mãi khiến nền tảng chịu thêm sức ép lợi nhuận. Sức ép lớn hơn khi trải nghiệm khách chưa đủ tốt; nếu bật sàn thu nhập, chi phí tài trợ chính sách trong thị trường cạnh tranh cũng tăng.';
     case 4:
-      if (dialogue) return 'Đối thoại đang giúp giảm căng thẳng giữa các bên, hỗ trợ tài xế và ổn định xã hội, đồng thời tránh việc tắt app hàng loạt trong mô phỏng.';
+      if (dialogue) return 'Đối thoại đang giúp giảm căng thẳng và tránh tắt app hàng loạt, nhưng sức ép thu nhập vẫn còn. Cần xem lại chiết khấu và hỗ trợ tài xế để ổn định cả bốn bên.';
       return result.strike
         ? 'Không có đối thoại và thu nhập quá thấp đã dẫn đến tài xế tắt app hàng loạt trong mô phỏng, làm nguồn cung và ổn định xã hội giảm mạnh.'
         : 'Chưa có đối thoại nên căng thẳng làm điểm xã hội giảm; tình huống hiện tại chưa kích hoạt tắt app hàng loạt trong mô phỏng.';
     case 5:
       return result.D < 55
         ? 'Nguồn tài xế chưa đủ đáp ứng giờ cao điểm nên khách chịu thêm phần thiệt do chờ xe lâu. Ngay cả khi tài xế vừa đạt ngưỡng ổn, khách vẫn có thể bị đỏ.'
-        : 'Nguồn tài xế đủ đáp ứng giờ cao điểm nên khách không chịu thêm phần thiệt do chờ xe trong mô phỏng.';
+        : 'Nhu cầu giờ cao điểm tăng mạnh khiến khách chịu thêm sức ép chờ xe dù tài xế đã đạt ngưỡng ổn. Cần thu hút thêm xe qua thu nhập tài xế và kiểm tra cả nguồn thu nền tảng.';
     default:
       return '';
   }

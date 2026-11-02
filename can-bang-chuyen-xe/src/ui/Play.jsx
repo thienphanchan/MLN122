@@ -3,7 +3,7 @@ import { EVENTS, ROUNDS } from '../game/events.js';
 import { DISCUSSION_ANSWERS } from '../game/discussion.js';
 import { getDayFeedback } from '../game/feedback.js';
 import { TEACHING_NOTES } from '../game/teaching.js';
-import { OK_THRESHOLD } from '../game/simulate.js';
+import { OK_THRESHOLD, simulate } from '../game/simulate.js';
 import { MAX_COMMISSION, MIN_COMMISSION } from '../game/state.js';
 import { DayMarks } from './DayMarks.jsx';
 import { DayFeedback } from './DayFeedback.jsx';
@@ -12,11 +12,11 @@ import { SourceLinks } from './TeachingNote.jsx';
 import { PARTIES, STATUS_DANGER, STATUS_OK } from './parties.js';
 import { prefersReducedMotion } from './useHash.js';
 
-const STATUS_TEXT = { pending: 'Chờ chốt', ok: STATUS_OK, danger: STATUS_DANGER };
+const STATUS_TEXT = { ok: STATUS_OK, danger: STATUS_DANGER };
 
-function Metric({ party, value, index }) {
-  const pending = value === null;
-  const kind = pending ? 'pending' : value >= OK_THRESHOLD ? 'ok' : 'danger';
+function Metric({ party, value, index, previous }) {
+  const kind = value >= OK_THRESHOLD ? 'ok' : 'danger';
+  const delta = previous === undefined ? null : value - previous;
   return (
     <li className={`metric metric--${party.cls}`} data-metric={party.key} style={{ '--i': index }}>
       <div className="metric-head">
@@ -25,14 +25,15 @@ function Metric({ party, value, index }) {
           <span className="metric-label">{party.label}</span>
         </span>
         <span className="metric-score">
-          <span className="metric-value" data-value="">{pending ? '—' : value}</span>
+          <span className="metric-value" data-value="">{value}</span>
           <span className={`status status--${kind}`} data-status="">{STATUS_TEXT[kind]}</span>
         </span>
       </div>
       <div className="bar" aria-hidden="true">
-        <span className="bar-fill" style={{ '--v': pending ? 0 : value / 100 }} />
+        <span className="bar-fill" style={{ '--v': value / 100 }} />
         <span className="bar-threshold" />
       </div>
+      {delta !== null && <p className="metric-change">{delta > 0 ? '+' : ''}{delta} điểm so với ngày trước</p>}
     </li>
   );
 }
@@ -57,6 +58,8 @@ export function Play({ game, actions, announce }) {
   const event = EVENTS[round - 1];
   const answer = DISCUSSION_ANSWERS[round - 1];
   const locked = result !== null;
+  const scores = result ?? simulate(round, commission, floor, dialogue);
+  const previous = history[round - 2]?.scores;
   const feedback = locked ? getDayFeedback(game) : null;
   const feedbackMessage = feedback?.message;
   const resultsTitleRef = useRef(null);
@@ -156,16 +159,18 @@ export function Play({ game, actions, announce }) {
           <div className="results-body">
             <div className="results-head">
               <h2 id="results-title" className="results-title" ref={resultsTitleRef} tabIndex={-1}>Bốn thanh lợi ích</h2>
-              <p className="results-hint">Từ 50 trở lên là ổn</p>
+              <p className="results-hint">{locked ? 'Đã chốt' : 'Dự tính hôm nay'} · Từ 50 trở lên là ổn</p>
             </div>
             {!locked && (
               <p className="results-waiting">
-                Chọn mức chiết khấu và chính sách, rồi bấm “Chốt quyết định” để xem kết quả ngày hôm nay.
+                {round > 1
+                  ? 'Biến cố mới đã tác động lên phương án hôm trước. Điều chỉnh để cân bằng bốn bên, rồi chốt.'
+                  : 'Điều chỉnh chiết khấu và chính sách để xem các thanh thay đổi, rồi chốt quyết định.'}
               </p>
             )}
-            <ul className="metrics" aria-label="Điểm lợi ích của bốn bên" key={locked ? 'result' : 'pending'}>
+            <ul className="metrics" aria-label={locked ? 'Điểm lợi ích của bốn bên' : 'Điểm lợi ích dự tính của bốn bên'}>
               {PARTIES.map((p, i) => (
-                <Metric key={p.key} party={p} value={locked ? result[p.key] : null} index={i} />
+                <Metric key={p.key} party={p} value={scores[p.key]} previous={previous?.[p.key]} index={i} />
               ))}
             </ul>
           </div>

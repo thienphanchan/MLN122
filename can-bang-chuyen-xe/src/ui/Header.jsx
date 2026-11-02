@@ -13,7 +13,7 @@ export function Header({ view }) {
       </a>
       <p className="notice" role="note">
         <Icon name="info" size={18} />
-        <span>Mô phỏng giả định · số liệu trong game không phải số liệu thực tế</span>
+        <span>Tình huống học tập · số liệu giả định để minh họa</span>
       </p>
       <a
         className="btn btn--secondary btn--compact topbar-history"

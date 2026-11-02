@@ -38,14 +38,49 @@ describe('simulate', () => {
     expect(simulate(4, 35, false, false).strike).toBe(true);
   });
 
-  test('matches the original formula for every day, commission and policy', () => {
+  test('can still read the original formula for every historical decision', () => {
     for (let r = 1; r <= ROUNDS; r++) {
       for (const c of COMMISSIONS) {
         for (const [floor, dialogue] of POLICIES) {
-          expect(simulate(r, c, floor, dialogue)).toEqual(original.simulate(r, c, floor, dialogue));
+          expect(simulate(r, c, floor, dialogue, 1)).toEqual(original.simulate(r, c, floor, dialogue));
         }
       }
     }
+  });
+
+  test('no unchanged commission and policies can win all five days', () => {
+    for (const c of COMMISSIONS) for (const [floor, dialogue] of POLICIES) {
+      const results = Array.from({ length: ROUNDS }, (_, i) => simulate(i + 1, c, floor, dialogue));
+      expect(results.every(isAllGreen), `${c}, ${floor}, ${dialogue}`).toBe(false);
+    }
+  });
+
+  test('each new shock after fuel prices breaks the previous day’s balance', () => {
+    for (let day = 2; day < ROUNDS; day++) {
+      let solutions = 0;
+      for (const c of COMMISSIONS) for (const [floor, dialogue] of POLICIES) {
+        if (!isAllGreen(simulate(day, c, floor, dialogue))) continue;
+        solutions++;
+        expect(isAllGreen(simulate(day + 1, c, floor, dialogue)), `day ${day}, ${c}, ${floor}, ${dialogue}`).toBe(false);
+      }
+      expect(solutions).toBeGreaterThan(0);
+    }
+  });
+
+  test('changing the decisions can restore balance after each market shock', () => {
+    const choices = [[20, false, false], [22, true, true], [22, false, true], [22, true, true], [16, true, true]];
+    const expected = [
+      { D: 70, P: 52, K: 72, X: 59, strike: false },
+      { D: 70, P: 51, K: 68, X: 81, strike: false },
+      { D: 70, P: 52, K: 72, X: 69, strike: false },
+      { D: 68, P: 50, K: 67, X: 84, strike: false },
+      { D: 100, P: 53, K: 54, X: 93, strike: false },
+    ];
+    choices.forEach((choice, i) => {
+      const scores = simulate(i + 1, ...choice);
+      expect(scores).toEqual(expected[i]);
+      expect(isAllGreen(scores)).toBe(true);
+    });
   });
 
   test('scores are integers between 0 and 100', () => {
@@ -76,11 +111,11 @@ describe('explain', () => {
     for (let r = 1; r <= ROUNDS; r++) {
       for (const c of COMMISSIONS) {
         for (const [floor, dialogue] of POLICIES) {
-          const res = simulate(r, c, floor, dialogue);
+          const res = simulate(r, c, floor, dialogue, 1);
           res.allGreen = isAllGreen(res);
           const ref = original.simulate(r, c, floor, dialogue);
           ref.allGreen = res.allGreen;
-          expect(explain(r, c, floor, dialogue, res)).toBe(original.explainFor(r, c, floor, dialogue, ref));
+          expect(explain(r, c, floor, dialogue, res, 1)).toBe(original.explainFor(r, c, floor, dialogue, ref));
         }
       }
     }

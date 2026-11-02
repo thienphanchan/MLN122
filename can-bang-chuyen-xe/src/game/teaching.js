@@ -23,7 +23,7 @@ export const TEACHING_SOURCES = {
   },
 };
 
-export const MODEL_NOTE = 'Thông điệp là diễn giải vận dụng cho game. Công thức, ngưỡng 50 và các tác động định lượng là giả định mô phỏng, không phải tiêu chuẩn trong giáo trình.';
+export const MODEL_NOTE = 'Nội dung liên hệ lý luận với tình huống thực tiễn. Công thức, ngưỡng 50 và các tác động định lượng là giả định minh họa, không phải tiêu chuẩn trong giáo trình.';
 
 export const TEACHING_NOTES = {
   harmony: {
@@ -31,7 +31,7 @@ export const TEACHING_NOTES = {
     sourceIds: ['ktct', 'state'],
   },
   motivation: {
-    text: 'Lợi ích kinh tế tạo động lực hoạt động. Việc xem xét thu nhập tài xế trong game vận dụng yêu cầu tôn trọng và bảo vệ lợi ích chính đáng của người tham gia tạo ra dịch vụ.',
+    text: 'Lợi ích kinh tế tạo động lực hoạt động. Việc xem xét thu nhập tài xế thể hiện yêu cầu tôn trọng và bảo vệ lợi ích chính đáng của người tham gia tạo ra dịch vụ.',
     sourceIds: ['ktct'],
   },
   unity: {
@@ -51,7 +51,7 @@ export const TEACHING_NOTES = {
     sourceIds: ['philosophy', 'ktct'],
   },
   overview: {
-    text: 'Game gợi mở sự thống nhất và mâu thuẫn của các quan hệ lợi ích; bảo vệ lợi ích chính đáng; và phối hợp thị trường, Nhà nước, các tổ chức xã hội. Màu điểm không thay thế việc phân tích lý luận.',
+    text: 'Tình huống cho thấy sự thống nhất và mâu thuẫn của các quan hệ lợi ích; yêu cầu bảo vệ lợi ích chính đáng; và sự phối hợp giữa thị trường, Nhà nước, các tổ chức xã hội. Cần phân tích điều kiện cụ thể của từng bên khi vận dụng lý luận vào thực tiễn.',
     sourceIds: ['ktct', 'state', 'philosophy', 'edition2021'],
   },
 };

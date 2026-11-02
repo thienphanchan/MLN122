@@ -2,6 +2,7 @@ import { describe, expect, test } from 'vitest';
 import { MAX_GAMES, addRecord, buildRecord, isBetter, isValidRecord } from '../src/game/records.js';
 import { confirm, createInitialState, next, setCommission, start, toggleDialogue, toggleFloor } from '../src/game/state.js';
 import { defaultData } from '../src/storage.js';
+import { simulate as originalSimulate } from './fixtures/original.js';
 
 function finishedHistory(days) {
   let s = start(createInitialState());
@@ -15,7 +16,7 @@ function finishedHistory(days) {
   return next(s).history;
 }
 
-const FIVE_WINS = [[20, false, false], [22, true, true], [22, true, true], [22, true, true], [22, true, true]];
+const FIVE_WINS = [[20, false, false], [22, true, true], [22, false, true], [22, true, true], [16, true, true]];
 const ONE_WIN = [[20, false, false], [35, false, false], [35, false, false], [35, false, false], [35, false, false]];
 const AT = new Date('2026-10-26T08:30:00.000Z');
 
@@ -89,6 +90,20 @@ describe('addRecord', () => {
 });
 
 describe('isValidRecord', () => {
+  test('keeps old records and their original scores after the model changes', () => {
+    const record = buildRecord(finishedHistory(FIVE_WINS), AT);
+    delete record.modelVersion;
+    record.days = record.days.map((day, i) => {
+      const { D, P, K, X } = originalSimulate(i + 1, day.commission, day.floor, day.dialogue);
+      return { ...day, scores: { D, P, K, X }, allGreen: Math.min(D, P, K, X) >= 50 };
+    });
+    record.wins = record.days.filter((d) => d.allGreen).length;
+    record.total = record.days.reduce((sum, d) => sum + Object.values(d.scores).reduce((a, b) => a + b, 0), 0);
+    expect(isValidRecord(record)).toBe(true);
+    expect(isValidRecord({ ...record, modelVersion: 99 })).toBe(false);
+    expect(isValidRecord({ ...record, modelVersion: 2 })).toBe(false);
+  });
+
   test('rejects records with missing or impossible fields', () => {
     const good = buildRecord(finishedHistory(FIVE_WINS), AT);
     const bad = [

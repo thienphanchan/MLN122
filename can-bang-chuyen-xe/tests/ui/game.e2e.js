@@ -1,12 +1,12 @@
 import { expect, test } from '@playwright/test';
 import { buildRecord } from '../../src/game/records.js';
 import { confirm, createInitialState, next, start, toSaved } from '../../src/game/state.js';
-import { simulate as originalSimulate } from '../fixtures/original.js';
+import { simulate } from '../../src/game/simulate.js';
 
 const KEY = 'cbcx:v1';
 const FLOOR = 'Sàn thu nhập + bảo hiểm tai nạn Bảo vệ tài xế, nền tảng tốn thêm chi phí';
 const DIALOGUE = 'Đối thoại ba bên định kỳ Nền tảng – tài xế – cơ quan quản lý';
-const CHOICES = [[20, false, false], [22, true, true], [22, true, true], [22, true, true], [22, true, true]];
+const CHOICES = [[20, false, false], [22, true, true], [22, false, true], [22, true, true], [16, true, true]];
 
 function savedRecord() {
   let state = start(createInitialState());
@@ -49,9 +49,36 @@ test('policy controls announce state once and keep a stable accessible name', as
   }
 });
 
+test('market shocks change the live bars and adjusting decisions restores green', async ({ page }) => {
+  const state = next(confirm({ ...start(createInitialState()), commission: 20 }));
+  await seed(page, { version: 1, current: toSaved(state), games: [], best: null });
+  const values = page.locator('[data-value]');
+  await expect(values).toHaveText(['58', '43', '65', '52']);
+  await expect(page.locator('[data-metric="P"] [data-status]')).toHaveText('Nguy hiểm');
+  await expect(page.locator('.metric-change')).toHaveText([
+    '-12 điểm so với ngày trước', '-9 điểm so với ngày trước', '-7 điểm so với ngày trước', '-7 điểm so với ngày trước',
+  ]);
+  await setCommission(page, 22);
+  await page.locator('#toggle-floor').click();
+  await page.locator('#toggle-dialogue').click();
+  await expect(values).toHaveText(['70', '51', '68', '81']);
+  await expect(page.locator('[data-status]')).toHaveText(['Ổn', 'Ổn', 'Ổn', 'Ổn']);
+  await page.reload();
+  await expect(values).toHaveText(['70', '51', '68', '81']);
+  expect(await page.evaluate((key) => JSON.parse(localStorage.getItem(key)).current.days.length, KEY)).toBe(1);
+  await page.getByRole('button', { name: 'Chốt quyết định' }).click();
+  await expect(values).toHaveText(['70', '51', '68', '81']);
+  await page.getByRole('button', { name: 'Sang ngày 3' }).click();
+  await expect(values).toHaveText(['82', '43', '75', '88']);
+  await expect(page.locator('[data-metric="P"] [data-status]')).toHaveText('Nguy hiểm');
+  await page.locator('#toggle-floor').click();
+  await expect(values).toHaveText(['70', '52', '72', '69']);
+  await expect(page.locator('[data-status]')).toHaveText(['Ổn', 'Ổn', 'Ổn', 'Ổn']);
+});
+
 test('five days preserve scores, choices, focus, history and the best result after reload', async ({ page }) => {
   await startGame(page);
-  await expect(page.locator('[data-value]')).toHaveText(['—', '—', '—', '—']);
+  await expect(page.locator('[data-value]')).toHaveText(['55', '51', '63', '50']);
   for (const [i, [commission, floor, dialogue]] of CHOICES.entries()) {
     const day = i + 1;
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(`Ngày ${day}/5`);
@@ -61,7 +88,7 @@ test('five days preserve scores, choices, focus, history and the best result aft
       if ((await toggle.getAttribute('aria-pressed') === 'true') !== on) await toggle.click();
     }
     await page.getByRole('button', { name: 'Chốt quyết định' }).click();
-    const scores = originalSimulate(day, commission, floor, dialogue);
+    const scores = simulate(day, commission, floor, dialogue);
     for (const key of ['D', 'P', 'K', 'X']) {
       await expect(page.locator(`[data-metric="${key}"] [data-value]`)).toHaveText(String(scores[key]));
     }

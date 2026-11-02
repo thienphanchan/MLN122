@@ -41,8 +41,8 @@ export function App({ store }) {
       {!storageOk && (
         <div className="container storage-warning" role="status">
           <p>
-            Không lưu được dữ liệu trên trình duyệt này. Game vẫn chơi bình thường, nhưng tải lại trang sẽ mất ván đang
-            chơi.
+            Không lưu được dữ liệu trên trình duyệt này. Bạn vẫn có thể tiếp tục phân tích tình huống, nhưng các quyết
+            định hiện tại sẽ mất khi tải lại trang.
           </p>
         </div>
       )}

@@ -17,7 +17,7 @@ export const DISCUSSION_ANSWERS = [
     concept: 'unity',
   },
   {
-    text: 'Chưa đủ căn cứ để kết luận chỉ từ hành động tắt app. Theo tiêu chí triết học Mác–Lênin, cần xét tính chất lợi ích cơ bản trong quan hệ xã hội cụ thể. Việc các bên còn cần nhau không tự chứng minh đó là mâu thuẫn không đối kháng. Trong phạm vi game, đây là tình huống xung đột về thu nhập và phân chia lợi ích; hướng xử lý được minh họa là đối thoại, thương lượng và bảo vệ quyền lợi hợp pháp.',
+    text: 'Chưa đủ căn cứ để kết luận chỉ từ hành động tắt app. Theo tiêu chí triết học Mác–Lênin, cần xét tính chất lợi ích cơ bản trong quan hệ xã hội cụ thể. Việc các bên còn cần nhau không tự chứng minh đó là mâu thuẫn không đối kháng. Trong tình huống này, xung đột liên quan đến thu nhập và phân chia lợi ích; hướng xử lý là đối thoại, thương lượng và bảo vệ quyền lợi hợp pháp.',
     lesson: 'Phân tích cụ thể từng mâu thuẫn; không dùng màu điểm hoặc một hành động đơn lẻ để kết luận tính chất đối kháng.',
     concept: 'classification',
   },
