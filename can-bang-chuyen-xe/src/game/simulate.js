@@ -2,13 +2,19 @@
 // D = tài xế, P = nền tảng, K = khách hàng, X = xã hội. Mỗi thanh là số nguyên 0..100.
 
 export const OK_THRESHOLD = 50;
-export const MODEL_VERSION = 2;
+export const MODEL_VERSION = 3;
+
+// Nhu cầu giờ cao điểm dùng cùng thang 0..100 với nguồn tài xế S.
+// Thiếu xe càng nhiều, sức ép chờ càng lớn; đủ xe thì hết phần phạt thiếu xe.
+export function getWaitingPenalty(supply) {
+  return Math.max(0, 100 - supply) * 1.8;
+}
 
 export function clamp(v) {
   return Math.max(0, Math.min(100, Math.round(v)));
 }
 
-// Phiên bản 1 chỉ dùng để đọc đúng điểm lịch sử cũ.
+// Phiên bản 1 và 2 chỉ dùng để đọc đúng điểm lịch sử cũ.
 export function simulate(round, commission, floor, dialogue, modelVersion = MODEL_VERSION) {
   const dynamic = modelVersion >= 2;
   const c = commission;
@@ -25,9 +31,14 @@ export function simulate(round, commission, floor, dialogue, modelVersion = MODE
   if (round === 3) P -= (K >= 65 ? 4 : 12);
   // Cạnh tranh làm nguồn thu giảm, tăng gánh nặng tài trợ sàn thu nhập.
   if (dynamic && round === 3 && floor) P -= 14;
-  if (round === 5 && S < 55) K -= 12;
-  // Cầu giờ cao điểm tăng: cùng nguồn xe như ngày thường sẽ không còn đủ.
-  if (dynamic && round === 5) K -= 32;
+  if (round === 5) {
+    if (modelVersion >= 3) {
+      K -= getWaitingPenalty(S);
+    } else {
+      if (S < 55) K -= 12;
+      if (dynamic) K -= 32;
+    }
+  }
   let X = 0.5 * D + 0.2 * K + 10 + (floor ? 12 : 0) + (dialogue ? 10 : 0);
   if (round === 4) X += dialogue ? 5 : -15;
   if (strike) X -= 15;
@@ -42,7 +53,9 @@ export function isAllGreen({ D, P, K, X }) {
 export function explain(round, commission, floor, dialogue, result, modelVersion = MODEL_VERSION) {
   const lines = [];
   if (modelVersion >= 2 && round === 3) lines.push('Đối thủ giảm giá làm nguồn thu suy giảm; tài trợ sàn thu nhập trong ngày cạnh tranh tạo thêm áp lực chi phí cho nền tảng.');
-  if (modelVersion >= 2 && round === 5) lines.push('Nhu cầu giờ cao điểm tăng mạnh: cần tăng phần thu nhập tài xế để thu hút đủ xe, đồng thời kiểm tra nguồn thu nền tảng.');
+  if (modelVersion >= 2 && round === 5) lines.push(modelVersion >= 3 && getWaitingPenalty(result.D) === 0
+    ? 'Nguồn tài xế đã đáp ứng nhu cầu giờ cao điểm nên áp lực chờ do thiếu xe đã được giải tỏa. Cần duy trì thu nhập tài xế và nguồn thu nền tảng để giữ chất lượng phục vụ.'
+    : 'Nhu cầu giờ cao điểm tăng trong khi nguồn tài xế chưa đáp ứng đủ: cần cải thiện thu nhập để thu hút thêm xe, giảm áp lực chờ và kiểm tra nguồn thu nền tảng.');
   if (commission >= 32) lines.push('Chiết khấu cao: tài xế bỏ app, ít xe nên lợi nhuận nền tảng cũng giảm. Lợi ích hai bên gắn với nhau.');
   else if (commission <= 17 && (modelVersion === 1 || result.P < OK_THRESHOLD)) lines.push('Chiết khấu quá thấp: nền tảng không đủ nguồn thu. Bóp một bên thì cả hệ thống yếu đi.');
   if (round === 2 && !floor) lines.push('Xăng tăng mà không có sàn thu nhập: tài xế gánh trọn rủi ro.');

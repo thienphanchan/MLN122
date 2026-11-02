@@ -1,4 +1,4 @@
-import { OK_THRESHOLD } from './simulate.js';
+import { OK_THRESHOLD, getWaitingPenalty } from './simulate.js';
 import { OUTCOME_CONCEPTS, TEACHING_NOTES } from './teaching.js';
 
 const PARTY_KEYS = ['D', 'P', 'K', 'X'];
@@ -120,9 +120,9 @@ function eventContext({ round, floor, dialogue, result }) {
         ? 'Không có đối thoại và thu nhập quá thấp đã dẫn đến tài xế tắt app hàng loạt trong mô phỏng, làm nguồn cung và ổn định xã hội giảm mạnh.'
         : 'Chưa có đối thoại nên căng thẳng làm điểm xã hội giảm; tình huống hiện tại chưa kích hoạt tắt app hàng loạt trong mô phỏng.';
     case 5:
-      return result.D < 55
-        ? 'Nguồn tài xế chưa đủ đáp ứng giờ cao điểm nên khách chịu thêm phần thiệt do chờ xe lâu. Ngay cả khi tài xế vừa đạt ngưỡng ổn, khách vẫn có thể bị đỏ.'
-        : 'Nhu cầu giờ cao điểm tăng mạnh khiến khách chịu thêm sức ép chờ xe dù tài xế đã đạt ngưỡng ổn. Cần thu hút thêm xe qua thu nhập tài xế và kiểm tra cả nguồn thu nền tảng.';
+      return getWaitingPenalty(result.D) > 0
+        ? 'Nhu cầu giờ cao điểm tăng trong khi nguồn tài xế chưa đáp ứng đủ, khiến khách chịu sức ép chờ xe. Cải thiện thu nhập và mức sẵn sàng của tài xế giúp giảm áp lực chờ; đồng thời cần kiểm tra nguồn thu nền tảng.'
+        : 'Nguồn tài xế đã đáp ứng nhu cầu giờ cao điểm nên áp lực chờ do thiếu xe đã được giải tỏa. Cần duy trì thu nhập tài xế và nguồn thu nền tảng để giữ chất lượng phục vụ.';
     default:
       return '';
   }

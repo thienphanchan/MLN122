@@ -76,6 +76,27 @@ test('market shocks change the live bars and adjusting decisions restores green'
   await expect(page.locator('[data-status]')).toHaveText(['Ổn', 'Ổn', 'Ổn', 'Ổn']);
 });
 
+test('peak-hour complaints depend on driver supply and clear after a suitable adjustment', async ({ page }) => {
+  let state = start(createInitialState());
+  for (const [commission, floor, dialogue] of CHOICES.slice(0, 4)) {
+    state = next(confirm({ ...state, commission, floor, dialogue }));
+  }
+  await seed(page, { version: 1, current: toSaved(state), games: [], best: null });
+  await expect(page.getByRole('heading', { name: /Khách phàn nàn chờ xe lâu/ })).toBeVisible();
+  await expect(page.locator('[data-value]')).toHaveText(['82', '61', '43', '82']);
+  await expect(page.locator('[data-metric="K"] [data-status]')).toHaveText('Nguy hiểm');
+  await setCommission(page, 16);
+  await expect(page.locator('[data-value]')).toHaveText(['100', '53', '86', '99']);
+  await expect(page.locator('[data-status]')).toHaveText(['Ổn', 'Ổn', 'Ổn', 'Ổn']);
+  await page.getByRole('button', { name: 'Chốt quyết định' }).click();
+  const feedback = page.getByRole('region', { name: 'Thông điệp ngày 5', exact: true });
+  await expect(feedback).toHaveAttribute('data-feedback', 'ok');
+  await expect(feedback).toContainText('áp lực chờ do thiếu xe đã được giải tỏa');
+  await page.reload();
+  await expect(page.locator('[data-value]')).toHaveText(['100', '53', '86', '99']);
+  await expect(feedback).toContainText('áp lực chờ do thiếu xe đã được giải tỏa');
+});
+
 test('five days preserve scores, choices, focus, history and the best result after reload', async ({ page }) => {
   await startGame(page);
   await expect(page.locator('[data-value]')).toHaveText(['55', '51', '63', '50']);

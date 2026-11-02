@@ -29,7 +29,7 @@ Phòng học có máy chiếu, người xem ngồi xa màn hình; có thể khô
 ## Capabilities and Constraints
 
 - 5 ngày, mỗi ngày một biến cố cố định; thanh chiết khấu 15–40%; hai chính sách bật/tắt; bốn thanh lợi ích, từ 50 trở lên là Ổn.
-- Biến cố phải làm thị trường thay đổi, người chơi cần điều chỉnh để đưa các bên về ngưỡng ổn (yêu cầu ngày 2/11/2026). Mô hình v2 tăng sức ép cạnh tranh, tranh chấp thu nhập và cầu giờ cao điểm; không có một cấu hình thắng cả 5 ngày. Bốn thanh hiển thị dự tính ngay khi điều chỉnh. Mô hình v1 chỉ dùng để đọc đúng lịch sử cũ.
+- Biến cố phải làm thị trường thay đổi, người chơi cần điều chỉnh để đưa các bên về ngưỡng ổn (yêu cầu ngày 2/11/2026). Mô hình v3 giữ sức ép cạnh tranh và tranh chấp thu nhập, đồng thời tính áp lực chờ giờ cao điểm từ mức thiếu tài xế thay vì trừ cố định: thu hút thêm xe làm áp lực giảm, đủ xe thì hết phần phạt thiếu xe. Không có một cấu hình thắng cả 5 ngày. Bốn thanh hiển thị dự tính ngay khi điều chỉnh. Mô hình v1/v2 chỉ dùng để đọc đúng lịch sử cũ.
 - Sau khi chốt: thông điệp cho đủ 16 tổ hợp trạng thái (cả bốn xanh và 15 tổ hợp đỏ), nguyên nhân gắn với biến cố và hướng giải quyết. Câu hỏi có đáp án gợi ý mặc định đóng, bấm mới hiện (người dùng yêu cầu ngày 2026-10-26).
 - Nội dung được tìm nguồn và đối chiếu Kinh tế chính trị Mác–Lênin theo yêu cầu ngày 2026-10-27; có mục cơ sở lý luận và nguồn. Các thông điệp là diễn giải vận dụng, không tự phân loại mâu thuẫn chỉ từ hành động tắt app.
 - Lưu ván dở, lịch sử ván đã xong và kết quả tốt nhất trong localStorage (key `cbcx:v1`). Không có máy chủ.

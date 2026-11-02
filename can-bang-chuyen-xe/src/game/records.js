@@ -52,7 +52,7 @@ function isValidDay(d, i, modelVersion) {
 
 export function isValidRecord(r) {
   return r !== null && typeof r === 'object'
-    && (r.modelVersion === undefined || r.modelVersion === 1 || r.modelVersion === MODEL_VERSION)
+    && (r.modelVersion === undefined || [1, 2, MODEL_VERSION].includes(r.modelVersion))
     && typeof r.id === 'string' && r.id.length > 0
     && typeof r.finishedAt === 'string' && !Number.isNaN(Date.parse(r.finishedAt))
     && Array.isArray(r.days) && r.days.length === ROUNDS

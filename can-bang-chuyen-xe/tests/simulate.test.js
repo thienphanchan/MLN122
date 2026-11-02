@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { EVENTS, ROUNDS } from '../src/game/events.js';
-import { OK_THRESHOLD, explain, isAllGreen, simulate } from '../src/game/simulate.js';
+import { OK_THRESHOLD, explain, getWaitingPenalty, isAllGreen, simulate } from '../src/game/simulate.js';
 import * as original from './fixtures/original.js';
 
 const COMMISSIONS = Array.from({ length: 26 }, (_, i) => 15 + i); // 15..40
@@ -74,13 +74,43 @@ describe('simulate', () => {
       { D: 70, P: 51, K: 68, X: 81, strike: false },
       { D: 70, P: 52, K: 72, X: 69, strike: false },
       { D: 68, P: 50, K: 67, X: 84, strike: false },
-      { D: 100, P: 53, K: 54, X: 93, strike: false },
+      { D: 100, P: 53, K: 86, X: 99, strike: false },
     ];
     choices.forEach((choice, i) => {
       const scores = simulate(i + 1, ...choice);
       expect(scores).toEqual(expected[i]);
       expect(isAllGreen(scores)).toBe(true);
     });
+  });
+
+  test('peak-hour waiting pressure falls as drivers become available and clears at full supply', () => {
+    expect(getWaitingPenalty(40)).toBeGreaterThan(getWaitingPenalty(70));
+    expect(getWaitingPenalty(70)).toBeGreaterThan(getWaitingPenalty(90));
+    expect(getWaitingPenalty(90)).toBeGreaterThan(0);
+    expect(getWaitingPenalty(100)).toBe(0);
+    for (const c of COMMISSIONS) for (const [floor, dialogue] of POLICIES) {
+      const day = simulate(1, c, floor, dialogue);
+      const peak = simulate(5, c, floor, dialogue);
+      expect(peak.D).toBe(day.D);
+      expect(peak.K).toBeLessThanOrEqual(day.K);
+      if (day.D === 100) expect(peak).toEqual(day);
+      else expect(peak.K).toBeLessThan(day.K);
+    }
+  });
+
+  test('at peak hours improving driver supply restores customer service and social benefits', () => {
+    const unchanged = simulate(5, 22, true, true);
+    const adjusted = simulate(5, 16, true, true);
+    expect(unchanged.K).toBeLessThan(OK_THRESHOLD);
+    expect(adjusted.D).toBeGreaterThan(unchanged.D);
+    expect(adjusted.K).toBeGreaterThan(unchanged.K);
+    expect(adjusted.X).toBeGreaterThan(unchanged.X);
+    expect(isAllGreen(adjusted)).toBe(true);
+    expect(explain(5, 16, true, true, adjusted)).toContain('đã được giải tỏa');
+  });
+
+  test('retains the previously published fixed waiting pressure for version 2 records', () => {
+    expect(simulate(5, 16, true, true, 2)).toEqual({ D: 100, P: 53, K: 54, X: 93, strike: false });
   });
 
   test('scores are integers between 0 and 100', () => {

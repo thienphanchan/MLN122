@@ -4,9 +4,9 @@ Game mô phỏng 5 ngày cho môn MLN122 (Lợi ích kinh tế và quan hệ l�
 
 ## Biến động thị trường
 
-Biến cố của ngày mới tác động ngay lên phương án giữ từ hôm trước. Xăng tăng gây sức ép thu nhập; cạnh tranh làm chi phí tài trợ chính sách nặng hơn; tranh chấp làm nguồn tài xế suy giảm ngay cả khi đã đối thoại; nhu cầu giờ cao điểm làm điểm khách hàng giảm. Người chơi quan sát, điều chỉnh rồi chốt. Không có một cấu hình chiết khấu/chính sách giữ xanh cả 5 ngày; mỗi ngày đều có phương án cân bằng. Ngưỡng ổn vẫn là 50.
+Biến cố của ngày mới tác động ngay lên phương án giữ từ hôm trước. Xăng tăng gây sức ép thu nhập; cạnh tranh làm chi phí tài trợ chính sách nặng hơn; tranh chấp làm nguồn tài xế suy giảm ngay cả khi đã đối thoại. Ngày khách phàn nàn chờ xe lâu, áp lực chờ phụ thuộc mức thiếu tài xế so với nhu cầu giờ cao điểm: cải thiện thu nhập giúp thu hút thêm xe và giảm phần thiệt của khách; khi đủ xe thì hết phần phạt do thiếu xe. Tác động này cũng lan tới lợi ích xã hội. Người chơi quan sát, điều chỉnh rồi chốt. Không có một cấu hình chiết khấu/chính sách giữ xanh cả 5 ngày; mỗi ngày đều có phương án cân bằng. Ngưỡng ổn vẫn là 50.
 
-Mô hình v2 được cân chỉnh ngày 2/11/2026 theo yêu cầu biến cố phải buộc người chơi thích ứng. Đây là các sức ép giả định theo 5 tình huống cố định, không phải dữ liệu thị trường trực tiếp. Lịch sử cũ được giữ nguyên điểm và kiểm tra bằng mô hình v1; ván dở được tính lại theo mô hình hiện tại khi tải lại.
+Mô hình v3 được cân chỉnh ngày 2/11/2026: kế thừa sức ép biến cố của v2 và thay khoản trừ cố định ở giờ cao điểm bằng `max(0, 100 - S) × 1,8`, với `S` là mức sẵn sàng của tài xế trên thang 0–100. Đây là công thức giả định theo 5 tình huống cố định, không phải dữ liệu thị trường trực tiếp. Lịch sử cũ được giữ nguyên điểm và kiểm tra bằng mô hình v1/v2 tương ứng; ván dở được tính lại theo mô hình hiện tại khi tải lại.
 
 ## Chạy
 
@@ -44,7 +44,7 @@ src/
     discussion.js     đáp án gợi ý và liên hệ bài học cho 5 câu hỏi
     feedback.js       16 thông điệp theo tổ hợp đỏ, nguyên nhân và hướng giải quyết
     teaching.js       cơ sở lý luận, danh mục nguồn và liên hệ từng tổ hợp
-    simulate.js       mô hình biến động v2; v1 để đọc lịch sử cũ
+    simulate.js       mô hình biến động v3; v1/v2 để đọc lịch sử cũ
     state.js          trạng thái ván chơi và các bước chuyển (hàm thuần), lưu/khôi phục
     records.js        bản ghi ván đã xong, kết quả tốt nhất (giữ 50 ván gần nhất)
   ui/                 Header, Intro, Play, End, History, DayMarks, Icon (.jsx)
@@ -66,7 +66,7 @@ tests/
 Một key duy nhất `cbcx:v1` chứa JSON `{ version: 1, current, games, best }`:
 
 - `current`: ván đang chơi, chỉ lưu các quyết định. Khi tải lại, điểm được tính lại bằng `simulate()`.
-- `games`: tối đa 50 ván đã xong, mới nhất trước. Mỗi ván mới có `modelVersion: 2`, thời điểm, số ngày cả bốn bên ổn, tổng điểm, và lựa chọn cùng điểm của từng ngày. Ván cũ không có `modelVersion` dùng công thức v1 để kiểm tra điểm.
+- `games`: tối đa 50 ván đã xong, mới nhất trước. Mỗi ván mới có `modelVersion: 3`, thời điểm, số ngày cả bốn bên ổn, tổng điểm, và lựa chọn cùng điểm của từng ngày. Ván cũ không có `modelVersion` dùng công thức v1; ván có `modelVersion: 2` vẫn kiểm tra bằng công thức v2.
 - `best`: ván tốt nhất. Ván có nhiều ngày cả bốn bên ổn hơn thì tốt hơn; nếu bằng nhau thì so tổng điểm.
 
 Phần dữ liệu nào hỏng thì chỉ phần đó bị bỏ qua: ván dở hỏng không làm mất lịch sử, và một ván trong lịch sử có điểm không khớp với các lựa chọn của nó sẽ bị loại. Khi dữ liệu bị sửa tay có nhiều ván cùng mã, chỉ giữ bản hợp lệ đầu tiên theo thứ tự đã lưu; sau đó lấy tối đa 50 ván. Nếu trình duyệt không cho lưu, game vẫn chơi bình thường và đầu trang báo là không lưu được. Mở game ở nhiều tab: khi một tab ghi hoặc xóa dữ liệu, các tab khác đọc lại nên không ghi đè lên nhau.
@@ -74,7 +74,7 @@ Phần dữ liệu nào hỏng thì chỉ phần đó bị bỏ qua: ván dở h
 ## Khác so với bản gốc
 
 - Thêm: lưu ván dở, lịch sử 50 ván, kết quả tốt nhất, màn "Lịch sử chơi" và nút "Xóa dữ liệu".
-- Giữ 5 biến cố/câu hỏi. Mô hình v2 tăng sức ép của biến cố để người chơi phải thích ứng; v1 vẫn được đối chiếu với bản gốc để bảo toàn lịch sử. Phần liên hệ, rút ra và kết luận được chỉnh theo đợt đối chiếu lý luận ngày 27/10/2026, có nguồn và ghi rõ giới hạn mô phỏng.
+- Giữ 5 biến cố/câu hỏi. Mô hình hiện tại tăng sức ép của biến cố để người chơi phải thích ứng và tính áp lực chờ từ nguồn tài xế; v1/v2 được giữ để bảo toàn lịch sử. Phần liên hệ, rút ra và kết luận được chỉnh theo đợt đối chiếu lý luận ngày 27/10/2026, có nguồn và ghi rõ giới hạn mô phỏng.
 - Thêm thông điệp tốt/xấu theo đủ 16 tổ hợp, nguyên nhân theo biến cố, hướng giải quyết và đáp án gợi ý chỉ hiện khi mở.
 - Màu: bốn màu chỉ dùng cho bốn bên. Nút chính đổi thành nền sáng chữ tối, thẻ biến cố đổi từ nền vàng sang nền sáng (vàng là màu của Khách hàng).
 - Bỏ nhãn chữ hoa giãn cách ("BIẾN CỐ HÔM NAY", "HỎI CẢ LỚP"), badge "5 ngày · 4 bên · 1 chuyến xe" và số 01/02/03; thông tin đưa vào tiêu đề và câu.

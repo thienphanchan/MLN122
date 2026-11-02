@@ -3,6 +3,7 @@ import { MAX_GAMES, addRecord, buildRecord, isBetter, isValidRecord } from '../s
 import { confirm, createInitialState, next, setCommission, start, toggleDialogue, toggleFloor } from '../src/game/state.js';
 import { defaultData } from '../src/storage.js';
 import { simulate as originalSimulate } from './fixtures/original.js';
+import { simulate } from '../src/game/simulate.js';
 
 function finishedHistory(days) {
   let s = start(createInitialState());
@@ -90,6 +91,20 @@ describe('addRecord', () => {
 });
 
 describe('isValidRecord', () => {
+  test('preserves published version 2 records without changing the waiting scores', () => {
+    const record = buildRecord(finishedHistory(FIVE_WINS), AT);
+    record.modelVersion = 2;
+    record.days = record.days.map((day, i) => {
+      const { D, P, K, X } = simulate(i + 1, day.commission, day.floor, day.dialogue, 2);
+      return { ...day, scores: { D, P, K, X }, allGreen: Math.min(D, P, K, X) >= 50 };
+    });
+    record.wins = record.days.filter((d) => d.allGreen).length;
+    record.total = record.days.reduce((sum, d) => sum + Object.values(d.scores).reduce((a, b) => a + b, 0), 0);
+    expect(record.days[4].scores).toEqual({ D: 100, P: 53, K: 54, X: 93 });
+    expect(isValidRecord(record)).toBe(true);
+    expect(isValidRecord({ ...record, modelVersion: 3 })).toBe(false);
+  });
+
   test('keeps old records and their original scores after the model changes', () => {
     const record = buildRecord(finishedHistory(FIVE_WINS), AT);
     delete record.modelVersion;
