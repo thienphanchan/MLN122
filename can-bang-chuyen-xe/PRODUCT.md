@@ -24,7 +24,7 @@ Minh họa chủ đề quan hệ lợi ích trong chương 5 giáo trình Kinh t
 
 ## Operating Context
 
-Phòng học có máy chiếu, người xem ngồi xa màn hình; có thể không có mạng. Một ván khoảng 10–15 phút kèm thảo luận. Dữ liệu chỉ lưu trên trình duyệt đang dùng.
+Phòng học có máy chiếu, người xem ngồi xa màn hình. Người chơi tham gia bằng điện thoại hoặc máy tính qua QR, liên kết hoặc mã phòng; cùng mạng Wi-Fi hoặc truy cập máy chủ Internet. Chủ phòng xem điểm trực tiếp. Một ván khoảng 10–15 phút kèm thảo luận. Chế độ cá nhân chạy được khi không có mạng ngoài và lưu trên trình duyệt; chế độ phòng cần kết nối máy chủ Node.
 
 ## Capabilities and Constraints
 
@@ -32,7 +32,10 @@ Phòng học có máy chiếu, người xem ngồi xa màn hình; có thể khô
 - Biến cố phải làm thị trường thay đổi, người chơi cần điều chỉnh để đưa các bên về ngưỡng ổn (yêu cầu ngày 2/11/2026). Mô hình v3 giữ sức ép cạnh tranh và tranh chấp thu nhập, đồng thời tính áp lực chờ giờ cao điểm từ mức thiếu tài xế thay vì trừ cố định: thu hút thêm xe làm áp lực giảm, đủ xe thì hết phần phạt thiếu xe. Không có một cấu hình thắng cả 5 ngày. Bốn thanh hiển thị dự tính ngay khi điều chỉnh. Mô hình v1/v2 chỉ dùng để đọc đúng lịch sử cũ.
 - Sau khi chốt: thông điệp cho đủ 16 tổ hợp trạng thái (cả bốn xanh và 15 tổ hợp đỏ), nguyên nhân gắn với biến cố và hướng giải quyết. Câu hỏi có đáp án gợi ý mặc định đóng, bấm mới hiện (người dùng yêu cầu ngày 2026-10-26).
 - Nội dung được tìm nguồn và đối chiếu Kinh tế chính trị Mác–Lênin theo yêu cầu ngày 2026-10-27; có mục cơ sở lý luận và nguồn. Các thông điệp là diễn giải vận dụng, không tự phân loại mâu thuẫn chỉ từ hành động tắt app.
-- Lưu ván dở, lịch sử ván đã xong và kết quả tốt nhất trong localStorage (key `cbcx:v1`). Không có máy chủ.
+- Chế độ cá nhân lưu ván dở, lịch sử ván đã xong và kết quả tốt nhất trong localStorage (key `cbcx:v1`).
+- Chế độ phòng (yêu cầu 4/11/2026): Node.js + Socket.IO quản lý phòng, quyền chủ/người chơi, tự tính điểm và cập nhật bảng chủ phòng sau mỗi quyết định đã chốt. Mỗi người tự chơi 5 ngày sau khi chủ phòng bắt đầu; không nhận người mới giữa ván. Phiên lưu riêng trong tab để tải lại và nối lại.
+- Cuối ván phòng có 5 câu trắc nghiệm, 10 điểm/câu, tự chấm trên máy chủ; điểm hiển thị riêng. Đáp án mở khi tất cả nộp hoặc chủ phòng kết thúc. Xếp hạng theo ngày cân bằng, tổng lợi ích, rồi trắc nghiệm; bằng nhau cùng hạng.
+- Phòng lưu trong JSON cục bộ nguyên tử, khôi phục sau khi máy chủ chạy lại; mặc định tối đa 100 người/phòng, hết hạn sau 24 giờ không hoạt động. Một tiến trình máy chủ, cần ổ lưu trữ bền vững khi triển khai Internet.
 
 ## Brand Commitments
 

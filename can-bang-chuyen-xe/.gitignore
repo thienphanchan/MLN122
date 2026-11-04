@@ -30,3 +30,7 @@ dist-ssr
 # Browser test output
 test-results
 playwright-report
+# Local room data and private deployment configuration
+data/
+.env
+.env.local

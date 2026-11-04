@@ -35,13 +35,15 @@ function BestLine({ data }) {
   );
 }
 
-export function End({ game, data, actions }) {
+export function End({ game, data, actions, embedded = false }) {
   const { insights, endTitle, endSub } = summarize(game.history);
+  const Title = embedded ? 'h2' : 'h1';
+  const titleId = embedded ? 'summary-title' : 'screen-title';
   return (
     <div className="end">
-      <section className="end-hero" aria-labelledby="screen-title">
+      <section className="end-hero" aria-labelledby={titleId}>
         <div className="end-copy">
-          <h1 id="screen-title" className="end-title" tabIndex={-1}>{endTitle}</h1>
+          <Title id={titleId} className="end-title" tabIndex={-1}>{endTitle}</Title>
           <p className="end-sub">{endSub}</p>
           <BestLine data={data} />
         </div>
@@ -76,12 +78,12 @@ export function End({ game, data, actions }) {
         <TeachingNote note={TEACHING_NOTES.overview} />
       </section>
 
-      <div className="actions">
+      {!embedded && <div className="actions">
         <button type="button" className="btn btn--primary btn--large" onClick={actions.restart}>
           <Icon name="restart" size={22} />
           <span>Chơi lại</span>
         </button>
-      </div>
+      </div>}
     </div>
   );
 }

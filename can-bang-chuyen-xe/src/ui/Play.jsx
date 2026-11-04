@@ -53,7 +53,7 @@ function Toggle({ id, title, sub, on, disabled, onClick }) {
 
 // Màn chơi của một ngày. App gắn key theo ngày nên mỗi ngày mới là một lần dựng mới
 // (chạy hiệu ứng chuyển ngày, đặt lại các ref).
-export function Play({ game, actions, announce }) {
+export function Play({ game, actions, announce, disabled = false, finalActionLabel = 'Xem tổng kết' }) {
   const { round, commission, floor, dialogue, result, history } = game;
   const event = EVENTS[round - 1];
   const answer = DISCUSSION_ANSWERS[round - 1];
@@ -112,7 +112,7 @@ export function Play({ game, actions, announce }) {
               max={MAX_COMMISSION}
               step={1}
               value={commission}
-              disabled={locked}
+              disabled={locked || disabled}
               aria-valuetext={`${commission}%`}
               aria-describedby="commission-scale"
               onChange={(e) => actions.setCommission(e.target.value)}
@@ -130,7 +130,7 @@ export function Play({ game, actions, announce }) {
               title="Sàn thu nhập + bảo hiểm tai nạn"
               sub="Bảo vệ tài xế, nền tảng tốn thêm chi phí"
               on={floor}
-              disabled={locked}
+              disabled={locked || disabled}
               onClick={actions.toggleFloor}
             />
             <Toggle
@@ -138,7 +138,7 @@ export function Play({ game, actions, announce }) {
               title="Đối thoại ba bên định kỳ"
               sub="Nền tảng – tài xế – cơ quan quản lý"
               on={dialogue}
-              disabled={locked}
+              disabled={locked || disabled}
               onClick={actions.toggleDialogue}
             />
           </div>
@@ -149,7 +149,7 @@ export function Play({ game, actions, announce }) {
               <span>Đã chốt quyết định ngày {round}.</span>
             </p>
           ) : (
-            <button type="button" className="btn btn--primary btn--large btn--block" onClick={actions.confirm}>
+            <button type="button" className="btn btn--primary btn--large btn--block" disabled={disabled} onClick={actions.confirm}>
               Chốt quyết định
             </button>
           )}
@@ -197,8 +197,8 @@ export function Play({ game, actions, announce }) {
 
         {locked && (
           <div className="play-action">
-            <button type="button" className="btn btn--primary btn--large btn--block" onClick={actions.next}>
-              {round < ROUNDS ? `Sang ngày ${round + 1}` : 'Xem tổng kết'}
+            <button type="button" className="btn btn--primary btn--large btn--block" disabled={disabled} onClick={actions.next}>
+              {round < ROUNDS ? `Sang ngày ${round + 1}` : finalActionLabel}
             </button>
           </div>
         )}

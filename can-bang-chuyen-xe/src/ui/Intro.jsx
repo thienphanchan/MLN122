@@ -1,8 +1,10 @@
 import { Icon } from './Icon.jsx';
 import { PARTIES } from './parties.js';
 import { HISTORY_HASH } from './useHash.js';
+import { readSession } from '../room/useRoom.js';
 
 export function Intro({ data, actions }) {
+  const roomSession = readSession();
   return (
     <div className="intro">
       <section className="intro-main" aria-labelledby="screen-title">
@@ -15,7 +17,13 @@ export function Intro({ data, actions }) {
           Theo dõi bốn thanh đo khi điều chỉnh, rồi chốt phương án cho từng ngày.
         </p>
         <div className="actions">
-          <button type="button" className="btn btn--primary btn--large" onClick={actions.start}>
+          <button type="button" className="btn btn--primary btn--large" onClick={() => { location.hash = '#phong/tao'; }}>Tạo phòng</button>
+          <button type="button" className="btn btn--secondary btn--large" onClick={() => { location.hash = '#tham-gia'; }}>Tham gia phòng</button>
+        </div>
+        <p className="intro-room-help">Cả lớp tham gia bằng mã QR. Chủ phòng xem điểm cập nhật trực tiếp.</p>
+        {roomSession && <a href={`#phong/${roomSession.code}`}>Quay lại phòng {roomSession.code}</a>}
+        <div className="actions">
+          <button type="button" className="btn btn--secondary btn--large" onClick={actions.start}>
             Bắt đầu ngày 1
           </button>
         </div>

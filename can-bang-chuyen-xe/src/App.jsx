@@ -5,12 +5,14 @@ import { History } from './ui/History.jsx';
 import { Intro } from './ui/Intro.jsx';
 import { Play } from './ui/Play.jsx';
 import { HISTORY_HASH, useHash } from './ui/useHash.js';
+import { RoomApp } from './room/RoomApp.jsx';
 
 export function App({ store }) {
   const { game, data, storageOk } = useSyncExternalStore(store.subscribe, store.getSnapshot);
   const { actions } = store;
   const hash = useHash();
-  const view = hash === HISTORY_HASH ? 'history' : game.screen;
+  const roomMode = hash.startsWith('#phong/') || hash.startsWith('#tham-gia');
+  const view = roomMode ? 'room' : hash === HISTORY_HASH ? 'history' : game.screen;
   const viewKey = view === 'play' ? `play-${game.round}` : view;
 
   const [announcement, setAnnouncement] = useState('');
@@ -30,7 +32,8 @@ export function App({ store }) {
   }, [view, viewKey]);
 
   let screen;
-  if (view === 'history') screen = <History data={data} actions={actions} announce={announce} />;
+  if (view === 'room') screen = <RoomApp key={hash} hash={hash} announce={announce} />;
+  else if (view === 'history') screen = <History data={data} actions={actions} announce={announce} />;
   else if (view === 'play') screen = <Play key={viewKey} game={game} actions={actions} announce={announce} />;
   else if (view === 'end') screen = <End game={game} data={data} actions={actions} />;
   else screen = <Intro data={data} actions={actions} />;

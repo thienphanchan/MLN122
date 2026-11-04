@@ -2,6 +2,38 @@
 
 Game mô phỏng 5 ngày cho môn MLN122 (Lợi ích kinh tế và quan hệ lợi ích kinh tế). Mỗi ngày người chơi chọn mức chiết khấu của nền tảng gọi xe và bật/tắt hai chính sách. Bốn thanh lợi ích cập nhật ngay khi điều chỉnh và hiện mức thay đổi so với ngày trước. Số liệu trong game là giả định.
 
+## Phòng QR, bảng điểm trực tiếp và trắc nghiệm
+
+Chọn **Tạo phòng** để lấy mã phòng, mã QR và liên kết tham gia. Người chơi mở trên điện thoại hoặc máy tính, nhập tên rồi vào phòng chờ. Chủ phòng bấm **Bắt đầu phòng**; mỗi người tự điều phối đủ 5 ngày. Điểm trên màn chủ phòng cập nhật ngay sau mỗi lần chốt quyết định và nộp bài.
+
+Sau ngày 5 có 5 câu trắc nghiệm, mỗi câu đúng 10 điểm, tối đa 50 điểm. Bài chỉ nộp một lần và phải trả lời đủ 5 câu. Điểm trắc nghiệm hiển thị riêng; thứ tự xếp hạng là số ngày cả bốn bên ổn → tổng điểm lợi ích → điểm trắc nghiệm. Bằng cả ba thì cùng hạng. Đáp án và giải thích chỉ mở khi mọi người đã nộp hoặc chủ phòng xác nhận kết thúc sớm. Người chưa nộp khi kết thúc sớm nhận 0 điểm trắc nghiệm; các quyết định đã chốt được giữ.
+
+Phòng khóa người mới khi bắt đầu, tối đa 100 người/phòng theo mặc định. Mất mạng hoặc tải lại trong cùng tab sẽ khôi phục tiến độ bằng phiên riêng; chủ phòng mất kết nối không dừng người chơi. Trang đầu có liên kết quay lại phòng đã lưu. Không chia sẻ token phiên hoặc file dữ liệu phòng.
+
+### Chạy để điện thoại cùng Wi-Fi quét QR
+
+Yêu cầu Node.js từ 22.12.0. Mở terminal tại thư mục `can-bang-chuyen-xe`:
+
+```bash
+npm ci
+npm run build
+npm start
+```
+
+Mở `http://localhost:3001` trên máy chủ. Ứng dụng đề xuất IP mạng để tạo QR; dùng **Đổi địa chỉ chia sẻ** nếu máy có nhiều card mạng/VPN. Ví dụ IP Wi-Fi của máy chủ là `192.168.1.10`, địa chỉ chia sẻ là `http://192.168.1.10:3001`. Điện thoại và máy tính cần truy cập được cùng địa chỉ này. Nếu Windows hỏi, cho phép Node.js trên mạng riêng; cấu hình firewall cho cổng 3001 nếu cần. Mạng khách có chế độ cô lập thiết bị có thể chặn kết nối giữa các máy.
+
+Có thể sao chép `.env.example` thành `.env`, đặt `PUBLIC_ORIGIN=http://IP-WIFI:3001`, rồi khởi động lại. Dùng `ipconfig` trên Windows để xem IPv4 của adapter Wi-Fi. Không dùng `localhost` hoặc `127.0.0.1` để mời thiết bị khác.
+
+### Phát triển và triển khai Internet
+
+`npm run dev` chạy đồng thời Node tại cổng 3001 và Vite tại cổng 5173; Vite chuyển tiếp `/api` và `/socket.io`. Khi chia sẻ bản dev, dùng IP Wi-Fi với cổng **5173** trong `PUBLIC_ORIGIN`. `npm run preview` chỉ phục vụ file tĩnh; chế độ phòng cần máy chủ Node.
+
+Để chạy qua Internet, triển khai thư mục này lên dịch vụ hỗ trợ Node.js và WebSocket/long polling. Lệnh build là `npm ci && npm run build`, lệnh start là `npm start`; đặt `PUBLIC_ORIGIN=https://ten-mien-cua-ban`, `HOST=0.0.0.0` và `PORT` do nền tảng cấp. Reverse proxy cần chuyển tiếp `/socket.io` gồm cả nâng cấp WebSocket và HTTP polling về cùng tiến trình Node. Tài liệu API chính thức: [Socket.IO server](https://socket.io/docs/v4/server-api/), [Socket.IO client](https://socket.io/docs/v4/client-api/).
+
+Máy chủ ghi phòng vào `data/rooms.json` bằng thay file nguyên tử và chỉ xác nhận sau khi lưu thành công. Gắn thư mục `data/` vào ổ lưu trữ bền vững trên dịch vụ hosting; dừng tiến trình trước khi sao lưu/khôi phục file này. Nếu lưu trên filesystem tạm của dịch vụ, phòng sẽ mất khi dịch vụ thay instance. Bản này dùng **một tiến trình Node**, không chạy nhiều replica cùng ghi một file. Chế độ chơi cá nhân vẫn lưu riêng trong localStorage.
+
+Phòng hết hạn sau 24 giờ không có hoạt động hợp lệ; dữ liệu hết hạn được dọn khi tạo phòng mới. Có thể đặt `ROOM_TTL_HOURS`, `MAX_PLAYERS`, `ROOM_DATA_FILE` theo `.env.example`. Mã phòng và câu hỏi là công khai, token chủ phòng/người chơi và đáp án chấm chỉ được máy chủ quản lý. Đây là triển khai mã nguồn và hướng dẫn vận hành; việc push Git không tự tạo một máy chủ Internet.
+
 ## Biến động thị trường
 
 Biến cố của ngày mới tác động ngay lên phương án giữ từ hôm trước. Xăng tăng gây sức ép thu nhập; cạnh tranh làm chi phí tài trợ chính sách nặng hơn; tranh chấp làm nguồn tài xế suy giảm ngay cả khi đã đối thoại. Ngày khách phàn nàn chờ xe lâu, áp lực chờ phụ thuộc mức thiếu tài xế so với nhu cầu giờ cao điểm: cải thiện thu nhập giúp thu hút thêm xe và giảm phần thiệt của khách; khi đủ xe thì hết phần phạt do thiếu xe. Tác động này cũng lan tới lợi ích xã hội. Người chơi quan sát, điều chỉnh rồi chốt. Không có một cấu hình chiết khấu/chính sách giữ xanh cả 5 ngày; mỗi ngày đều có phương án cân bằng. Ngưỡng ổn vẫn là 50.
@@ -12,16 +44,18 @@ Mô hình v3 được cân chỉnh ngày 2/11/2026: kế thừa sức ép biến
 
 ```bash
 npm install
-npm run dev      # mở http://localhost:5173
+npm run dev      # Vite :5173 + máy chủ phòng :3001
 npm test         # chạy test logic (vitest)
-npm run test:ui  # build và kiểm tra giao diện bằng Google Chrome thật (Playwright)
+npx playwright install chromium # cài trình duyệt kiểm thử một lần
+npm run test:ui  # build và kiểm tra trên Chromium thật (Playwright)
 npm run build    # bản production trong dist/
-npm run preview  # xem thử bản production
+npm start        # phục vụ production và phòng trực tiếp tại :3001
+npm run preview  # chỉ xem file tĩnh, không có máy chủ phòng
 ```
 
 Font Be Vietnam Pro được đóng gói sẵn, nên bản build chạy được cả khi không có mạng. Thư mục `dist/` cần được mở qua một web server (`npm run preview`, hoặc `npx serve dist`); mở thẳng `dist/index.html` bằng cách nhấp đúp sẽ ra trang trắng vì trình duyệt chặn module JavaScript từ `file://`.
 
-`npm run test:ui` cần Google Chrome đã cài trên máy (nếu chưa có: `npx playwright install chrome`). Kịch bản nằm trong `tests/ui/game.e2e.js`; Playwright tự mở server preview tại `127.0.0.1:4173` rồi đóng khi xong, nên cần để trống cổng này. Các ca chạy trên bản production ở 1440×900, 768×1024 và 390×844, mỗi ca có dữ liệu trình duyệt riêng: kiểm tra trọn ván 5 ngày, biến động và thanh dự tính, thông điệp tốt/xấu, mở/đóng đáp án bằng chuột và bàn phím, tải lại, lịch sử, dữ liệu trùng/sửa tay, ngữ nghĩa truy cập, xác nhận xóa và font. Khi lỗi, ảnh cùng trace được lưu trong `test-results/`.
+`npm run test:ui` dùng Chromium do Playwright quản lý (`npx playwright install chromium`). Kịch bản nằm trong `tests/ui/game.e2e.js` và `tests/ui/rooms.e2e.js`; Playwright tự mở máy chủ production tại `127.0.0.1:4173` rồi đóng khi xong. Để trống cổng này. Các ca chạy ở 1440×900, 768×1024 và 390×844: giữ kiểm tra chế độ cá nhân và thêm chủ phòng cùng hai người chơi trong các browser context độc lập, QR, điểm trực tiếp, khôi phục, tự chấm trắc nghiệm, ẩn đáp án, mã sai và kết thúc sớm. Kho phòng kiểm thử nằm riêng ở `test-results/rooms.json`. Khi lỗi, ảnh cùng trace được lưu trong `test-results/`.
 
 ## Thông điệp và thảo luận sau mỗi ngày
 
@@ -35,6 +69,7 @@ Mục **Cơ sở lý luận và nguồn** trong từng thông điệp và màn t
 
 ```
 src/
+  room/               giao diện tạo/tham gia phòng, QR, bảng điểm, trắc nghiệm và kết nối realtime
   main.jsx            điểm vào: nạp font, CSS, tạo store và render <App>
   App.jsx             chọn màn hình (mở đầu, chơi, tổng kết, lịch sử), focus và thông báo
   store.js            trạng thái app + ghi localStorage sau mỗi thay đổi (không phụ thuộc React)
@@ -52,6 +87,8 @@ src/
   base.css            nền tảng chung (reset, focus, giảm chuyển động)
   styles.css          giao diện các màn
 tests/
+  rooms.test.js       phân quyền, tiến độ, điểm, nộp lặp, đồng thời, hết hạn và lưu/khôi phục phòng
+  server.test.js      kiểm thử socket thật, cập nhật trực tiếp, khôi phục và dữ liệu riêng tư
   simulate.test.js    biến động, phương án cân bằng, chống thắng cố định và đối chiếu v1
   feedback.test.js    đủ 16 tổ hợp, phân loại 520 cấu hình, biến cố và khôi phục
   state.test.js       luật chơi, tổng kết, lưu và khôi phục ván
@@ -60,6 +97,8 @@ tests/
   store.test.js       lưu sau mỗi bước, ghi ván đúng một lần, xóa dữ liệu
   ui/game.e2e.js      kiểm tra giao diện trên Chrome thật ở ba kích thước
 ```
+
+`server/index.js` phục vụ HTTP và Socket.IO; `server/rooms.js` quản lý vòng đời phòng và tính điểm; `server/repository.js` lưu JSON nguyên tử; `server/quiz.js` giữ đáp án chấm riêng, không đi vào bundle trình duyệt.
 
 ## Dữ liệu lưu trên trình duyệt
 

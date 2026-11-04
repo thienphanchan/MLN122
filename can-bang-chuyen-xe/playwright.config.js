@@ -8,7 +8,6 @@ export default defineConfig({
   reporter: 'list',
   use: {
     baseURL: 'http://127.0.0.1:4173',
-    channel: 'chrome',
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
   },
@@ -18,8 +17,9 @@ export default defineConfig({
     { name: 'phone', use: { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true } },
   ],
   webServer: {
-    command: 'npm run preview -- --host 127.0.0.1 --port 4173 --strictPort',
+    command: 'npm start',
     url: 'http://127.0.0.1:4173',
     reuseExistingServer: false,
+    env: { PORT: '4173', HOST: '127.0.0.1', ROOM_DATA_FILE: 'test-results/rooms.json', PUBLIC_ORIGIN: 'http://127.0.0.1:4173' },
   },
 });
