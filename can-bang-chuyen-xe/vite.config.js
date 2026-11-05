@@ -11,11 +11,11 @@ export default defineConfig(({ mode }) => {
   plugins: [react()],
   server: {
     fs: {
-      deny: ['.env', '.env.*', '*.{crt,pem}', '**/.git/**', '**/server/**', '**/data/**', '**/tests/**', '**/test-results/**', '*.log', roomFilePattern, `${roomFilePattern}.*.tmp`],
+      deny: ['.env', '.env.*', '*.{crt,pem}', '**/.git/**', '**/server/**', '**/api/**', '**/data/**', '**/tests/**', '**/test-results/**', '*.log', roomFilePattern, `${roomFilePattern}.*.tmp`],
     },
     proxy: {
       '/socket.io': { target, ws: true },
-      '/api': { target },
+      '/api': { target, ws: true },
     },
   },
   };

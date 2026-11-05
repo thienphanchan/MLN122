@@ -77,30 +77,60 @@ export function useRoom(hash) {
   }, []);
 
   useEffect(() => {
-    const socket = io({ autoConnect: false });
+    let socket;
+    let retryTimer;
     let active = true;
-    socketRef.current = socket;
-    socket.on('connect', async () => {
-      setError('');
-      const saved = sessionRef.current;
-      if (saved) {
-        try {
-          const result = await socket.timeout(10000).emitWithAck('room:resume', saved);
-          if (!active) return;
-          if (result.ok) { setView(result.view); setConnected(true); }
-          else { setError(result.error); setConnected(false); }
-        } catch { if (active) setError('Chưa khôi phục được phiên. Hãy tải lại trang để thử lại.'); }
-      } else {
-        setConnected(true);
-        if (initialHash.current === '#phong/tao') send('create');
+    const controller = new AbortController();
+    async function initialize() {
+      try {
+        const response = await fetch('/api/config', { signal: controller.signal, cache: 'no-store' });
+        let config;
+        try { config = await response.json(); } catch { /* A static-only deployment can return HTML instead. */ }
+        if (!response.ok || !config) {
+          const failure = new Error(typeof config?.error === 'string' ? config.error
+            : 'Máy chủ phòng chưa sẵn sàng trên địa chỉ này. Hãy nhờ người tổ chức kiểm tra triển khai.');
+          failure.publicMessage = true;
+          throw failure;
+        }
+        if (!active) return;
+        socket = io({ ...config.socket, autoConnect: false });
+        socketRef.current = socket;
+        socket.on('connect', async () => {
+          setError('');
+          const saved = sessionRef.current;
+          if (saved) {
+            try {
+              const result = await socket.timeout(10000).emitWithAck('room:resume', saved);
+              if (!active) return;
+              if (result.ok) { setView(result.view); setConnected(true); }
+              else { setError(result.error); setConnected(false); }
+            } catch { if (active) setError('Chưa khôi phục được phiên. Hãy tải lại trang để thử lại.'); }
+          } else {
+            setConnected(true);
+            if (initialHash.current === '#phong/tao') send('create');
+          }
+        });
+        socket.on('disconnect', () => { if (active) setConnected(false); });
+        socket.on('connect_error', () => { if (active) { setConnected(false); setError('Chưa kết nối được máy chủ phòng. Máy chủ có thể chưa sẵn sàng; hãy thử lại sau ít phút.'); } });
+        socket.on('room:view', (next) => { if (active) setView(next); });
+        socket.on('room:error', (message) => { if (active) { setError(message); setConnected(false); } });
+        socket.connect();
+      } catch (failure) {
+        if (!active) return;
+        setConnected(false);
+        setError(failure.publicMessage ? failure.message : 'Chưa kết nối được máy chủ phòng. Hãy kiểm tra kết nối hoặc thử lại sau ít phút.');
+        retryTimer = window.setTimeout(initialize, 3000);
       }
-    });
-    socket.on('disconnect', () => { if (active) setConnected(false); });
-    socket.on('connect_error', () => { if (active) { setConnected(false); setError('Chưa kết nối được máy chủ phòng. Kiểm tra mạng và thử lại.'); } });
-    socket.on('room:view', (next) => { if (active) setView(next); });
-    socket.on('room:error', (message) => { if (active) { setError(message); setConnected(false); } });
-    socket.connect();
-    return () => { active = false; socket.removeAllListeners(); socket.disconnect(); socketRef.current = null; };
+    }
+    initialize();
+    return () => {
+      active = false;
+      controller.abort();
+      clearTimeout(retryTimer);
+      socket?.removeAllListeners();
+      socket?.disconnect();
+      socketRef.current = null;
+    };
   }, [send]);
 
   return { session, view, connected, pending, error, storageOk, send };

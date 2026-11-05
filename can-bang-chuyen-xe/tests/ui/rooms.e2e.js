@@ -142,3 +142,13 @@ test('the host keeps access in the same tab when session storage is unavailable'
   await expect(page.getByRole('button', { name: 'Bắt đầu phòng', exact: true })).toBeVisible();
   await expect(page.getByRole('status').filter({ hasText: 'Trình duyệt đang chặn lưu phiên' })).toBeVisible();
 });
+
+test('an unconfigured hosted server reports setup failure instead of blaming the player network', async ({ page }) => {
+  await page.route('**/api/config', (route) => route.fulfill({ status: 503, contentType: 'application/json', body: JSON.stringify({
+    ok: false, code: 'ROOM_STORAGE_NOT_CONFIGURED', error: 'Máy chủ phòng chưa được thiết lập. Hãy nhờ người tổ chức hoàn tất cấu hình phòng trực tuyến.',
+  }) }));
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Tạo phòng', exact: true }).click();
+  await expect(page.getByRole('alert')).toContainText('Máy chủ phòng chưa được thiết lập');
+  await expect(page.getByTestId('room-code')).toHaveCount(0);
+});

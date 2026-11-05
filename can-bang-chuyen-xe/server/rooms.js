@@ -18,6 +18,7 @@ export async function createRoomService({ repository, now = Date.now, maxPlayers
   let data = await repository.load();
   let queue = Promise.resolve();
   const connections = new Map();
+  const sharedPresence = new Map();
   const listeners = new Set();
   function validPlayer(player) {
     if (!player || typeof player.id !== 'string' || typeof player.token !== 'string' || typeof player.name !== 'string'
@@ -51,6 +52,12 @@ export async function createRoomService({ repository, now = Date.now, maxPlayers
   }
   function transaction(change) {
     const result = queue.then(async () => {
+      if (repository.transact) {
+        const committed = await repository.transact(change);
+        data = committed.data;
+        emit();
+        return committed.result;
+      }
       const draft = structuredClone(data);
       const result = change(draft);
       await repository.save(draft);
@@ -61,12 +68,30 @@ export async function createRoomService({ repository, now = Date.now, maxPlayers
     queue = result.catch(() => {});
     return result;
   }
-  function isConnected(code, secret) { return (connections.get(`${code}:${secret}`)?.size ?? 0) > 0; }
+  function isConnected(code, secret) {
+    if (repository.getPresence) return sharedPresence.get(code)?.has(secret) ?? false;
+    return (connections.get(`${code}:${secret}`)?.size ?? 0) > 0;
+  }
+
+  function refresh(sessions = []) {
+    const result = queue.then(async () => {
+      data = await repository.load();
+      if (repository.getPresence) {
+        const codes = [...new Set(sessions.map((session) => session.code))];
+        await Promise.all(codes.map(async (code) => { sharedPresence.set(code, new Set(await repository.getPresence(code))); }));
+      }
+      emit();
+    });
+    queue = result.catch(() => {});
+    return result;
+  }
 
   return {
     subscribe(listener) { listeners.add(listener); return () => listeners.delete(listener); },
+    refresh,
     setConnected(session, connectionId, connected) {
       authorize(data, session);
+      if (repository.setPresence) return repository.setPresence(session, connectionId, connected).then(() => refresh([session]));
       const key = `${session.code}:${session.token}`;
       const ids = connections.get(key) ?? new Set();
       if (connected) ids.add(connectionId); else ids.delete(connectionId);

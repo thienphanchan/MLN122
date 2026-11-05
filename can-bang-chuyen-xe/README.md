@@ -24,13 +24,27 @@ Mở `http://localhost:3001` trên máy chủ. Ứng dụng đề xuất IP mạ
 
 Có thể sao chép `.env.example` thành `.env`, đặt `PUBLIC_ORIGIN=http://IP-WIFI:3001`, rồi khởi động lại. Dùng `ipconfig` trên Windows để xem IPv4 của adapter Wi-Fi. Không dùng `localhost` hoặc `127.0.0.1` để mời thiết bị khác.
 
-### Phát triển và triển khai Internet
+### Triển khai trên Vercel
+
+Dự án có `vercel.json` và các Vercel Functions tại `api/`: `/api/config`, `/api/health`, `/api/rooms`. Giao diện vẫn được build bằng Vite; phần phòng chạy trên Node Functions với Fluid compute. Socket.IO dùng WebSocket trực tiếp tại `/api/rooms`, không thêm dấu `/` cuối và không cần rewrite đường kết nối.
+
+1. Trong Vercel Project Settings, đặt **Root Directory** là `can-bang-chuyen-xe` (thư mục chứa `package.json` và `vercel.json`), Framework Preset **Vite**. Build `npm run build`, Output `dist`, Install `npm ci`; các giá trị đã có trong `vercel.json`. Sử dụng Node.js 24.x.
+2. Kết nối một cơ sở dữ liệu Redis qua Vercel Storage/Marketplace hoặc Redis đang có. Đặt **`REDIS_URL`** bằng connection string `rediss://...` do nhà cung cấp cấp, trong Environment Variables của project. Hỗ trợ cả `KV_URL` của tích hợp cũ. Chỉ có REST URL/token thì chưa đủ cho kết nối Redis TCP/pub-sub này. Không đặt thông tin Redis vào biến bắt đầu bằng `VITE_`, và không gửi mật khẩu vào chat hoặc commit vào Git.
+3. Bật phạm vi **Production** cho biến môi trường; thêm **Preview** nếu cần kiểm tra bản xem trước. Mỗi môi trường dùng namespace riêng; preview tách theo nhánh. Có thể đặt `ROOM_REDIS_PREFIX` để ghi đè khi cần dùng một namespace cụ thể.
+4. Redeploy sau khi kết nối Redis hoặc đổi biến môi trường. `PUBLIC_ORIGIN` có thể để trống: QR tự dùng địa chỉ website hiện tại. Nếu cấu hình riêng, dùng `https://mln-122-kappa.vercel.app` hoặc tên miền thật, không dùng IP máy cá nhân.
+5. Mở `/api/health`: trạng thái sẵn sàng trả HTTP 200 và `{"ok":true,"storage":"redis"}`. `/api/config` phải trả JSON với đường Socket.IO `/api/rooms`. Sau đó tạo phòng, mở liên kết ở thiết bị khác và kiểm tra điểm sau khi chốt ngày 1.
+
+Khi chưa có Redis, API trả **503** với mã `ROOM_STORAGE_NOT_CONFIGURED`; ứng dụng thông báo máy chủ chưa được thiết lập. Nếu `/api/health` hoặc `/api/config` trả **404**, cần kiểm tra Root Directory, commit đang deploy và sự hiện diện của thư mục `api/` trong bản build. Chỉ upload thư mục `dist/` sẽ thiếu backend. Có biến Redis sai hoặc database mất kết nối thì health trả `ROOM_STORAGE_UNAVAILABLE`, không lộ URL/mật khẩu.
+
+Vercel có thể phân bố chủ phòng và người chơi tới các instance khác nhau. Redis dùng compare-and-set nguyên tử để tránh ghi đè quyết định, pub/sub để cập nhật bảng điểm, và presence có hạn để dọn kết nối mất đột ngột. Kết nối hết thời lượng Function sẽ tự nối lại và tải trạng thái chung. Không dùng JSON hay bộ nhớ của một instance làm kho phòng trên Vercel. Tham khảo [WebSocket và Socket.IO trên Vercel](https://vercel.com/docs/functions/websockets).
+
+### Phát triển và máy chủ Node riêng
 
 `npm run dev` chạy đồng thời Node tại cổng 3001 và Vite tại cổng 5173; Vite chuyển tiếp `/api` và `/socket.io`. Khi chia sẻ bản dev, dùng IP Wi-Fi với cổng **5173** trong `PUBLIC_ORIGIN`. `npm run preview` chỉ phục vụ file tĩnh; chế độ phòng cần máy chủ Node.
 
 Để chạy qua Internet, triển khai thư mục này lên dịch vụ hỗ trợ Node.js và WebSocket/long polling. Lệnh build là `npm ci && npm run build`, lệnh start là `npm start`; đặt `PUBLIC_ORIGIN=https://ten-mien-cua-ban`, `HOST=0.0.0.0` và `PORT` do nền tảng cấp. Reverse proxy cần chuyển tiếp `/socket.io` gồm cả nâng cấp WebSocket và HTTP polling về cùng tiến trình Node. Tài liệu API chính thức: [Socket.IO server](https://socket.io/docs/v4/server-api/), [Socket.IO client](https://socket.io/docs/v4/client-api/).
 
-Máy chủ ghi phòng vào `data/rooms.json` bằng thay file nguyên tử và chỉ xác nhận sau khi lưu thành công. Gắn thư mục `data/` vào ổ lưu trữ bền vững trên dịch vụ hosting; dừng tiến trình trước khi sao lưu/khôi phục file này. Nếu lưu trên filesystem tạm của dịch vụ, phòng sẽ mất khi dịch vụ thay instance. Bản này dùng **một tiến trình Node**, không chạy nhiều replica cùng ghi một file. Chế độ chơi cá nhân vẫn lưu riêng trong localStorage.
+Máy chủ Node riêng dùng Redis khi có `REDIS_URL`/`KV_URL`; khi không cấu hình Redis, máy chủ ghi phòng vào `data/rooms.json` bằng thay file nguyên tử và chỉ xác nhận sau khi lưu thành công. Với chế độ file, gắn thư mục `data/` vào ổ lưu trữ bền vững, dừng tiến trình trước khi sao lưu/khôi phục và chỉ chạy **một tiến trình Node**. Nhiều instance phải dùng Redis chung. Chế độ chơi cá nhân vẫn lưu riêng trong localStorage.
 
 Phòng hết hạn sau 24 giờ không có hoạt động hợp lệ; dữ liệu hết hạn được dọn khi tạo phòng mới. Có thể đặt `ROOM_TTL_HOURS`, `MAX_PLAYERS`, `ROOM_DATA_FILE` theo `.env.example`. Mã phòng và câu hỏi là công khai, token chủ phòng/người chơi và đáp án chấm chỉ được máy chủ quản lý. Đây là triển khai mã nguồn và hướng dẫn vận hành; việc push Git không tự tạo một máy chủ Internet.
 
@@ -52,6 +66,18 @@ npm run build    # bản production trong dist/
 npm start        # phục vụ production và phòng trực tiếp tại :3001
 npm run preview  # chỉ xem file tĩnh, không có máy chủ phòng
 ```
+
+Kiểm thử Redis thật có thể chạy với Redis riêng dành cho test (không trỏ vào dữ liệu thật). Ví dụ PowerShell:
+
+```powershell
+docker run --rm -d --name cbcx-redis-test -p 127.0.0.1:16379:6379 redis:7-alpine
+$env:TEST_REDIS_URL = 'redis://127.0.0.1:16379'
+npm test
+npm run test:hosted # native HTTP/WebSocket proxy + Redis thật
+docker stop cbcx-redis-test
+```
+
+Các ca Redis dùng namespace ngẫu nhiên, kiểm tra nhiều instance, ghi đồng thời, pub/sub, tự chấm, khôi phục và dọn kết nối khi khởi tạo lỗi. `test:hosted` chạy luồng phòng trên ba kích thước qua lớp HTTP/WebSocket proxy của entry Vercel với Redis thật. Khi không đặt `TEST_REDIS_URL`, chỉ nhóm tích hợp Redis thật được bỏ qua trong `npm test`; các test logic, HTTP cấu hình và giao diện thường vẫn chạy. `test:hosted` luôn yêu cầu biến này.
 
 Font Be Vietnam Pro được đóng gói sẵn, nên bản build chạy được cả khi không có mạng. Thư mục `dist/` cần được mở qua một web server (`npm run preview`, hoặc `npx serve dist`); mở thẳng `dist/index.html` bằng cách nhấp đúp sẽ ra trang trắng vì trình duyệt chặn module JavaScript từ `file://`.
 

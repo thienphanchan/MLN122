@@ -35,7 +35,8 @@ Phòng học có máy chiếu, người xem ngồi xa màn hình. Người chơi
 - Chế độ cá nhân lưu ván dở, lịch sử ván đã xong và kết quả tốt nhất trong localStorage (key `cbcx:v1`).
 - Chế độ phòng (yêu cầu 4/11/2026): Node.js + Socket.IO quản lý phòng, quyền chủ/người chơi, tự tính điểm và cập nhật bảng chủ phòng sau mỗi quyết định đã chốt. Mỗi người tự chơi 5 ngày sau khi chủ phòng bắt đầu; không nhận người mới giữa ván. Phiên lưu riêng trong tab để tải lại và nối lại.
 - Cuối ván phòng có 5 câu trắc nghiệm, 10 điểm/câu, tự chấm trên máy chủ; điểm hiển thị riêng. Đáp án mở khi tất cả nộp hoặc chủ phòng kết thúc. Xếp hạng theo ngày cân bằng, tổng lợi ích, rồi trắc nghiệm; bằng nhau cùng hạng.
-- Phòng lưu trong JSON cục bộ nguyên tử, khôi phục sau khi máy chủ chạy lại; mặc định tối đa 100 người/phòng, hết hạn sau 24 giờ không hoạt động. Một tiến trình máy chủ, cần ổ lưu trữ bền vững khi triển khai Internet.
+- Mặc định tối đa 100 người/phòng, hết hạn sau 24 giờ không hoạt động. Node riêng hỗ trợ JSON cục bộ nguyên tử cho một tiến trình hoặc Redis dùng chung.
+- Triển khai Vercel (sửa ngày 5/11/2026): Vite frontend + Node Functions, Socket.IO WebSocket trực tiếp tại `/api/rooms`, Redis bắt buộc để đồng bộ quyết định, thông báo điểm và presence giữa các instance. Có API health/config và lỗi thiết lập rõ ràng; không tạo phòng tạm trong file hoặc bộ nhớ khi thiếu Redis. Production và preview có namespace riêng, kết nối lại khôi phục trạng thái chung.
 
 ## Brand Commitments
 

@@ -63,6 +63,16 @@ it('rejects malformed envelopes and does not expose room storage or answer keys 
   }
 });
 
+it('keeps a local HTTP polling connection available when WebSocket upgrades are blocked', async () => {
+  const { origin } = await serverAndClients();
+  const config = await (await fetch(`${origin}/api/config`)).json();
+  const socket = connect(origin, { ...config.socket, upgrade: false, forceNew: true, reconnection: false });
+  cleanup.push(() => socket.close());
+  await new Promise((resolve, reject) => { socket.once('connect', resolve); socket.once('connect_error', reject); });
+  expect(socket.io.engine.transport.name).toBe('polling');
+  expect((await request(socket, 'room:create', { requestId: 'polling-request-1' })).ok).toBe(true);
+});
+
 it('refuses a configured room file inside a directory served to browsers', async () => {
   const previous = process.env.ROOM_DATA_FILE;
   try {
